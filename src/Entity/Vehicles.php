@@ -16,20 +16,32 @@ class Vehicles
     #[ORM\Column(length: 50)]
     private ?string $model = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 50)]
     private ?string $color = null;
 
     #[ORM\Column(length: 20)]
     private ?string $registration = null;
 
-    #[ORM\Column]
-    private ?\DateTime $date_first_registration = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $date_first_registration = null;
 
-    #[ORM\Column]
-    private ?\DateTime $created_at = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $created_at = null;
 
-    #[ORM\Column]
-    private ?\DateTime $updated_at = null;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $updated_at = null;
+
+    #[ORM\ManyToOne(inversedBy: 'vehicles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Brands $brand = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Energies $energy = null;
 
     public function getId(): ?int
     {
@@ -44,7 +56,6 @@ class Vehicles
     public function setModel(string $model): static
     {
         $this->model = $model;
-
         return $this;
     }
 
@@ -56,7 +67,6 @@ class Vehicles
     public function setColor(string $color): static
     {
         $this->color = $color;
-
         return $this;
     }
 
@@ -68,43 +78,72 @@ class Vehicles
     public function setRegistration(string $registration): static
     {
         $this->registration = $registration;
-
         return $this;
     }
 
-    public function getDateFirstRegistration(): ?\DateTime
+    public function getDateFirstRegistration(): ?\DateTimeInterface
     {
         return $this->date_first_registration;
     }
 
-    public function setDateFirstRegistration(\DateTime $date_first_registration): static
+    public function setDateFirstRegistration(\DateTimeInterface $date_first_registration): static
     {
         $this->date_first_registration = $date_first_registration;
-
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTime
+    public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTime $created_at): static
+    public function setCreatedAt(\DateTimeInterface $created_at): static
     {
         $this->created_at = $created_at;
-
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTime
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(\DateTime $updated_at): static
+    public function setUpdatedAt(\DateTimeInterface $updated_at): static
     {
         $this->updated_at = $updated_at;
+        return $this;
+    }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    public function getBrand(): ?Brands
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(?Brands $brand): static
+    {
+        $this->brand = $brand;
+        return $this;
+    }
+
+    public function getEnergy(): ?Energies
+    {
+        return $this->energy;
+    }
+
+    public function setEnergy(?Energies $energy): static
+    {
+        $this->energy = $energy;
         return $this;
     }
 }

@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Suspension;
+use App\Entity\Suspensions;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Suspension>
+ * @extends ServiceEntityRepository<Suspensions>
  */
-class SuspensionRepository extends ServiceEntityRepository
+class SuspensionsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Suspension::class);
+        parent::__construct($registry, Suspensions::class);
     }
 
     //    /**
-    //     * @return Suspension[] Returns an array of Suspension objects
+    //     * @return Suspensions[] Returns an array of Suspensions objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class SuspensionRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Suspension
+    //    public function findOneBySomeField($value): ?Suspensions
     //    {
     //        return $this->createQueryBuilder('s')
     //            ->andWhere('s.exampleField = :val')

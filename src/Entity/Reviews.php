@@ -23,8 +23,24 @@ class Reviews
     #[ORM\Column]
     private ?bool $is_validated = null;
 
-    #[ORM\Column]
-    private ?\DateTime $created_at = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $created_at = null;
+
+    #[ORM\ManyToOne(inversedBy: 'reviewsAuthored')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $author = null;
+
+    #[ORM\ManyToOne(inversedBy: 'reviewsReceived')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $targetUser = null;
+
+    #[ORM\ManyToOne(inversedBy: 'reviews')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?CarSharings $carSharing = null;
+
+    #[ORM\ManyToOne(inversedBy: 'reviews')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -39,7 +55,6 @@ class Reviews
     public function setRating(int $rating): static
     {
         $this->rating = $rating;
-
         return $this;
     }
 
@@ -51,7 +66,6 @@ class Reviews
     public function setComment(string $comment): static
     {
         $this->comment = $comment;
-
         return $this;
     }
 
@@ -63,19 +77,61 @@ class Reviews
     public function setIsValidated(bool $is_validated): static
     {
         $this->is_validated = $is_validated;
-
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTime
+    public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTime $created_at): static
+    public function setCreatedAt(\DateTimeInterface $created_at): static
     {
         $this->created_at = $created_at;
+        return $this;
+    }
 
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): static
+    {
+        $this->author = $author;
+        return $this;
+    }
+
+    public function getTargetUser(): ?User
+    {
+        return $this->targetUser;
+    }
+
+    public function setTargetUser(?User $targetUser): static
+    {
+        $this->targetUser = $targetUser;
+        return $this;
+    }
+
+    public function getCarSharing(): ?CarSharings
+    {
+        return $this->carSharing;
+    }
+
+    public function setCarSharing(?CarSharings $carSharing): static
+    {
+        $this->carSharing = $carSharing;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
         return $this;
     }
 }

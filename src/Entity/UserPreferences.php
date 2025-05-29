@@ -16,6 +16,14 @@ class UserPreferences
     #[ORM\Column(length: 50)]
     private ?string $value = null;
 
+    #[ORM\ManyToOne(inversedBy: "userPreferences")]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Preferences $preference = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -29,7 +37,28 @@ class UserPreferences
     public function setValue(string $value): static
     {
         $this->value = $value;
+        return $this;
+    }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    public function getPreference(): ?Preferences
+    {
+        return $this->preference;
+    }
+
+    public function setPreference(?Preferences $preference): static
+    {
+        $this->preference = $preference;
         return $this;
     }
 }

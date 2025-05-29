@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EnergiesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EnergiesRepository::class)]
@@ -22,6 +24,14 @@ class Energies
     #[ORM\Column]
     private ?int $autonomy_km = null;
 
+    #[ORM\OneToMany(mappedBy: 'energy', targetEntity: Vehicles::class)]
+    private Collection $vehicles;
+
+    public function __construct()
+    {
+        $this->vehicles = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -35,7 +45,6 @@ class Energies
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -47,7 +56,6 @@ class Energies
     public function setCo2Emission(int $co2_emission): static
     {
         $this->co2_emission = $co2_emission;
-
         return $this;
     }
 
@@ -59,6 +67,34 @@ class Energies
     public function setAutonomyKm(int $autonomy_km): static
     {
         $this->autonomy_km = $autonomy_km;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vehicles>
+     */
+    public function getVehicles(): Collection
+    {
+        return $this->vehicles;
+    }
+
+    public function addVehicle(Vehicles $vehicle): static
+    {
+        if (!$this->vehicles->contains($vehicle)) {
+            $this->vehicles->add($vehicle);
+            $vehicle->setEnergy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVehicle(Vehicles $vehicle): static
+    {
+        if ($this->vehicles->removeElement($vehicle)) {
+            if ($vehicle->getEnergy() === $this) {
+                $vehicle->setEnergy(null);
+            }
+        }
 
         return $this;
     }
