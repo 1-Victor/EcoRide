@@ -3,6 +3,9 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
-    <h1>Bienvenue {{ app.user.username }} !</h1>
-    <p>Votre inscription a bien été prise en compte.</p>
+    {% if app.user %}
+        <h1>Bienvenue {{ app.user.username }} !</h1>
+    {% else %}
+        <h1>Bienvenue !</h1>
+    {% endif %}
 {% endblock %}
