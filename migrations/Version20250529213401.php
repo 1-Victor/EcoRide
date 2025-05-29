@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250529160832 extends AbstractMigration
+final class Version20250529213401 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,13 +21,13 @@ final class Version20250529160832 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE user ADD role_id INT NOT NULL, CHANGE created_at created_at VARCHAR(255) NOT NULL, CHANGE updated_at updated_at VARCHAR(255) NOT NULL
+            CREATE TABLE user_roles (user_id INT NOT NULL, roles_id INT NOT NULL, INDEX IDX_54FCD59FA76ED395 (user_id), INDEX IDX_54FCD59F38C751C4 (roles_id), PRIMARY KEY(user_id, roles_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE user ADD CONSTRAINT FK_8D93D649D60322AC FOREIGN KEY (role_id) REFERENCES roles (id)
+            ALTER TABLE user_roles ADD CONSTRAINT FK_54FCD59FA76ED395 FOREIGN KEY (user_id) REFERENCES `user` (id) ON DELETE CASCADE
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE INDEX IDX_8D93D649D60322AC ON user (role_id)
+            ALTER TABLE user_roles ADD CONSTRAINT FK_54FCD59F38C751C4 FOREIGN KEY (roles_id) REFERENCES roles (id) ON DELETE CASCADE
         SQL);
     }
 
@@ -35,13 +35,13 @@ final class Version20250529160832 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE `user` DROP FOREIGN KEY FK_8D93D649D60322AC
+            ALTER TABLE user_roles DROP FOREIGN KEY FK_54FCD59FA76ED395
         SQL);
         $this->addSql(<<<'SQL'
-            DROP INDEX IDX_8D93D649D60322AC ON `user`
+            ALTER TABLE user_roles DROP FOREIGN KEY FK_54FCD59F38C751C4
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE `user` DROP role_id, CHANGE created_at created_at DATETIME NOT NULL, CHANGE updated_at updated_at DATETIME NOT NULL
+            DROP TABLE user_roles
         SQL);
     }
 }
