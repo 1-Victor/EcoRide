@@ -1,15 +1,83 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Accueil | EcoRide{% endblock %}
 
 {% block body %}
-    {% if app.user %}
-        <h1>Bienvenue {{ app.user.username }} !</h1>
-    {% else %}
-        <h1>Bienvenue !</h1>
-    {% endif %}
+{% include 'components/menu.html.twig' %}
 
-    {% if app.user.imageName %}
-        <img src="{{ asset('uploads/users/image_profile/' ~ app.user.imageName) }}" alt="Photo de profil" class="img-fluid rounded-circle">
-    {% endif %}
+<div class="container py-5">
+    <h1 class="text-center text-success mb-4">Bienvenue sur EcoRide 🌱</h1>
+
+    <section class="mb-5">
+        <h2>Qui sommes-nous ?</h2>
+        <p>
+            EcoRide est une startup française engagée pour l’environnement.
+            Notre mission : faciliter le covoiturage éco-responsable pour les trajets en voiture.
+        </p>
+        <div class="row mt-4">
+            <div class="col-md-4"><img src="{{ asset('images/ecoride1.jpg') }}" class="img-fluid rounded" alt="Voiture électrique 1"></div>
+            <div class="col-md-4"><img src="{{ asset('images/ecoride2.jpg') }}" class="img-fluid rounded" alt="Voiture électrique 2"></div>
+            <div class="col-md-4"><img src="{{ asset('images/ecoride3.jpg') }}" class="img-fluid rounded" alt="Passagers heureux"></div>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <h2>Rechercher un itinéraire</h2>
+
+        <form method="get" action="{{ path('app_search') }}">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label for="from" class="form-label">Ville de départ</label>
+                    <input type="text" name="from" id="from" class="form-control" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="to" class="form-label">Ville d’arrivée</label>
+                    <input type="text" name="to" id="to" class="form-control" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="date" class="form-label">Date du voyage</label>
+                    <input type="date" name="date" id="date" class="form-control" required>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <label class="form-label">Écologique uniquement</label><br>
+                    <input type="checkbox" name="eco" value="1"> ✅
+                </div>
+
+                <div class="col-md-3">
+                    <label for="max_price" class="form-label">Prix maximum (€)</label>
+                    <input type="number" name="max_price" id="max_price" class="form-control" step="0.01" min="0">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="max_duration" class="form-label">Durée maximale (minutes)</label>
+                    <input type="number" name="max_duration" id="max_duration" class="form-control" min="1">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="min_rating" class="form-label">Note minimale</label>
+                    <input type="number" name="min_rating" id="min_rating" class="form-control" min="1" max="5" step="0.1">
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between">
+                <button type="submit" class="btn btn-success">🔍 Rechercher</button>
+                <a href="{{ path('app_home') }}" class="btn btn-outline-danger">❌ Réinitialiser les filtres</a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="bg-light text-center py-4 mt-auto border-top">
+    <p>Contact : <a href="mailto:contact@ecoride.fr">contact@ecoride.fr</a></p>
+    <p><a href="#">Mentions légales</a></p>
+</footer>
 {% endblock %}

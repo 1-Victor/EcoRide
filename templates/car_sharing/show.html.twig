@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail du covoiturage{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h2 class="mb-4">Détail du trajet</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">{{ carSharing.startAddress }} → {{ carSharing.endAddress }}</h5>
+            <p class="card-text">
+                <strong>Date de départ :</strong> {{ carSharing.dateStart|date('d/m/Y H:i') }}<br>
+                <strong>Date d’arrivée :</strong> {{ carSharing.dateEnd|date('d/m/Y H:i') }}<br>
+                <strong>Prix :</strong> {{ carSharing.price }} €<br>
+                <strong>Places disponibles :</strong> {{ carSharing.availablePlaces }} / {{ carSharing.totalPlaces }}<br>
+                <strong>Écologique :</strong> {{ carSharing.ecoFriendly ? 'Oui ✅' : 'Non ❌' }}
+            </p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5>Conducteur</h5>
+            {% if carSharing.user.imageName %}
+                <img src="{{ asset('uploads/users/image_profile/' ~ carSharing.user.imageName) }}"
+                    alt="Photo de {{ carSharing.user.username }}"
+                    class="rounded-circle mb-2"
+                    style="width: 60px; height: 60px; object-fit: cover;">
+            {% endif %}
+            <p>
+                <strong>{{ carSharing.user.firstname }} {{ carSharing.user.lastname }}</strong><br>
+                Pseudo : {{ carSharing.user.username }}<br>
+                Téléphone : {{ carSharing.user.phone }}
+            </p>
+
+            <h6>Préférences du conducteur :</h6>
+            {% if carSharing.user.preferences is empty %}
+                <p>Aucune préférence enregistrée.</p>
+            {% else %}
+                <ul>
+                    {% for pref in carSharing.user.preferences %}
+                        <li>{{ pref.name }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <h6>Avis :</h6>
+            {% if carSharing.user.reviews is empty %}
+                <p>Aucun avis pour ce conducteur.</p>
+            {% else %}
+                <ul>
+                    {% for review in carSharing.user.reviews %}
+                        <li>
+                            ⭐ {{ review.note }}/5 – {{ review.commentaire }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5>Véhicule</h5>
+            <p>
+                <strong>Marque :</strong> {{ carSharing.vehicle.brand }}<br>
+                <strong>Modèle :</strong> {{ carSharing.vehicle.model }}<br>
+                <strong>Énergie :</strong> {{ carSharing.vehicle.energy.name }}
+            </p>
+        </div>
+    </div>
+
+    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">← Retour à l’accuei_

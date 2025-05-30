@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultats de recherche{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h2>Résultats pour le trajet {{ from }} → {{ to }} le {{ date|date('d/m/Y') }}</h2>
+
+    {% if eco or max_price or max_duration or min_rating %}
+        <div class="alert alert-info mt-3">
+            <strong>Filtres actifs :</strong>
+            <ul class="mb-0">
+                {% if eco %}
+                    <li>🟢 Voyages écologiques uniquement</li>
+                {% endif %}
+                {% if max_price %}
+                    <li>💰 Prix maximum : {{ max_price }} €</li>
+                {% endif %}
+                {% if max_duration %}
+                    <li>⏱ Durée maximale : {{ max_duration }} minutes</li>
+                {% endif %}
+                {% if min_rating %}
+                    <li>⭐ Note minimale du conducteur : {{ min_rating }}/5</li>
+                {% endif %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {% if results is empty %}
+        <p class="text-muted">Aucun covoiturage trouvé.</p>
+
+        {% if alternative %}
+            <p>
+                Prochain trajet proposé :
+                <strong>{{ alternative.dateStart|date('d/m/Y H:i') }}</strong><br>
+                <a href="{{ path('app_trajet_show', { id: alternative.id }) }}" class="btn btn-outline-success mt-2">
+                    Voir ce trajet
+                </a>
+            </p>
+        {% endif %}
+    {% else %}
+        <div class="row">
+            {% for item in results %}
+                {% set duration = item.dateStart.diff(item.dateEnd) %}
+                {% set duration_minutes = (duration.h * 60) + duration.i %}
+                {% set notes = item.user.reviews|map(r => r.note)|filter(n => n is not null) %}
+                {% set avg = notes|length > 0 ? (notes|reduce((carry, n) => carry + n) / notes|length)|number_format(1) : 'Aucune note' %}
+
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                {% if item.user.imageName %}
+                                    <img src="{{ asset('uploads/users/image_profile/' ~ item.user.imageName) }}"
+                                        class="rounded-circle me-3"
+                                        style="width: 50px; height: 50px; object-fit: cover;"
+                                        alt="{{ item.user.username }}">
+                                {% endif %}
+                                <div>
+                                    <strong>{{ item.user.username }}</strong><br>
+                                    <small>Note : {{ avg }}/5 ⭐</small>
+                                </div>
+                            </div>
+
+                            <p class="card-text">
+                                Départ : {{ item.dateStart|date('d/m/Y H:i') }}<br>
+                                Arrivée : {{ item.dateEnd|date('d/m/Y H:i') }}<br>
+                                🕓 Durée estimée : {{ duration_minutes }} minutes<br>
+                                💰 Prix : {{ item.price }} €<br>
+                                👥 Places dispo : {{ item.availablePlaces }} / {{ item.totalPlaces }}<br>
+                                🌱 Écologique : {{ item.ecoFriendly ? 'Oui ✅' : 'Non ❌' }}
+                            </p>
+
+                            <a href="{{ path('app_trajet_show', { id: item.id }) }}" class="btn btn-success">
+                                Voir le détail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary mt-4">← Retour à l'accueil</a>
+</div>
+{% endblock %}

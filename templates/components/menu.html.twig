@@ -1,0 +1,28 @@
+<header class="navbar navbar-expand-lg bg-success bg-opacity-75 shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand text-white fw-bold" href="{{ path('app_home') }}">
+            EcoRide
+        </a>
+
+        <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ path('app_home') }}">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ path('app_search') }}">Covoiturages</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ path('app_login') }}">Connexion</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
