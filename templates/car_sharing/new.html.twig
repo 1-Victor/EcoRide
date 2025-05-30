@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Proposer un trajet{% endblock %}
+
+{% block body %}
+{% include 'components/menu.html.twig' %}
+<div class="container py-5">
+    <h2 class="mb-4">Proposer un nouveau covoiturage</h2>
+
+    {% if app.user.credit < 2 %}
+        <div class="alert alert-danger">
+            Vous n'avez pas assez de crédits pour proposer un trajet (minimum requis : 2 crédits).
+        </div>
+    {% endif %}
+
+    {{ form_start(form) }}
+        {{ form_row(form.start_address) }}
+        {{ form_row(form.end_address) }}
+        {{ form_row(form.date_start) }}
+        {{ form_row(form.date_end) }}
+        {{ form_row(form.price) }}
+        {{ form_row(form.total_places) }}
+        {{ form_row(form.vehicle) }}
+
+        <button type="submit" class="btn btn-success mt-3">Valider le trajet</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

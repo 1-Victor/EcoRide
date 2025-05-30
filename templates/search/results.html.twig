@@ -3,6 +3,7 @@
 {% block title %}Résultats de recherche{% endblock %}
 
 {% block body %}
+{% include 'components/menu.html.twig' %}
 <div class="container py-4">
     <h2>Résultats pour le trajet {{ from }} → {{ to }} le {{ date|date('d/m/Y') }}</h2>
 
