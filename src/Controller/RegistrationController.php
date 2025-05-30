@@ -26,33 +26,34 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
+            // Récupération du mot de passe brut
             $plainPassword = $form->get('plainPassword')->getData();
-
-            // Set plain password for validation
             $user->setPlainPassword($plainPassword);
 
-            // Encode and store password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            // Hash du mot de passe
+            $hashedPassword = $userPasswordHasher->hashPassword($user, $plainPassword);
+            $user->setPassword($hashedPassword);
 
-            // Set default values
+            // Données par défaut
             $user->setCredit(20);
             $user->setCreatedAt(new \DateTimeImmutable());
             $user->setUpdatedAt(new \DateTimeImmutable());
 
             // Rôle par défaut
             $defaultRole = $entityManager->getRepository(\App\Entity\Roles::class)->findOneBy(['name' => 'ROLE_USER']);
-
             if (!$defaultRole) {
                 throw new \Exception('Le rôle ROLE_USER est introuvable en base.');
             }
-
             $user->setRole($defaultRole);
 
+            // Persistance
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // Log in user and redirect
+            // ⚠️ Empêcher la sérialisation de l'objet File
+            $user->setImageFile(null);
+
+            // Connexion automatique
             $security->login($user, 'form_login', 'main');
 
             return $this->redirectToRoute('app_home');

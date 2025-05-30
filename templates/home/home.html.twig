@@ -8,4 +8,8 @@
     {% else %}
         <h1>Bienvenue !</h1>
     {% endif %}
+
+    {% if app.user.imageName %}
+        <img src="{{ asset('uploads/users/image_profile/' ~ app.user.imageName) }}" alt="Photo de profil" class="img-fluid rounded-circle">
+    {% endif %}
 {% endblock %}

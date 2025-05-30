@@ -4,13 +4,15 @@
 
 {% block body %}
     <h1>Créer un compte</h1>
-
+    <form method="post" enctype="multipart/form-data">
     {{ form_start(registrationForm) }}
         {{ form_row(registrationForm.username) }}
         {{ form_row(registrationForm.email) }}
         {{ form_row(registrationForm.phone) }}
         {{ form_row(registrationForm.plainPassword) }}
+        {{ form_row(registrationForm.imageFile) }}
         <button type="submit">S'inscrire</button>
         <a href="{{ path('app_login') }}">Je me connecte</a>
     {{ form_end(registrationForm) }}
+</form>
 {% endblock %}
