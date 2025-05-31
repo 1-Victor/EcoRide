@@ -34,10 +34,10 @@ class CarSharingsRepository extends ServiceEntityRepository
             ->join('c.user', 'u')
             ->join('c.vehicle', 'v')
             ->addSelect('u', 'v')
-            ->where('c.start_address = :from')
-            ->andWhere('c.end_address = :to')
-            ->andWhere('c.date_start BETWEEN :start AND :end')
-            ->andWhere('c.available_places > 0')
+            ->where('(c.startAddress = :from OR c.startCity = :from)')
+            ->andWhere('(c.endAddress = :to OR c.endCity = :to)')
+            ->andWhere('c.dateStart BETWEEN :start AND :end')
+            ->andWhere('c.availablePlaces > 0')
             ->setParameter('from', $from)
             ->setParameter('to', $to)
             ->setParameter('start', $start)
@@ -50,9 +50,6 @@ class CarSharingsRepository extends ServiceEntityRepository
         if (!empty($filters['max_price'])) {
             $qb->andWhere('c.price <= :max_price')
                 ->setParameter('max_price', $filters['max_price']);
-        }
-
-        if (!empty($filters['max_duration'])) {
         }
 
         $results = $qb->getQuery()->getResult();
@@ -77,14 +74,16 @@ class CarSharingsRepository extends ServiceEntityRepository
         });
     }
 
+
     public function getClosestCarSharingAfterDate(string $from, string $to, \DateTimeInterface $date): ?CarSharings
     {
         return $this->createQueryBuilder('c')
-            ->where('c.start_address = :from')
-            ->andWhere('c.end_address = :to')
-            ->andWhere('c.date_start > :date')
-            ->andWhere('c.available_places > 0')
-            ->orderBy('c.date_start', 'ASC')
+            ->where('(c.startAddress = :from OR c.startCity = :from)')
+            ->andWhere('(c.endAddress = :to OR c.endCity = :to)')
+            ->andWhere('c.dateStart > :date')
+            ->andWhere('c.availablePlaces > 0')
+            ->andWhere('c.eco_friendly = true')
+            ->orderBy('c.dateStart', 'ASC')
             ->setMaxResults(1)
             ->setParameter('from', $from)
             ->setParameter('to', $to)

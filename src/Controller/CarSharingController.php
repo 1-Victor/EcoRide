@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\String\UnicodeString;
 
 final class CarSharingController extends AbstractController
 {
@@ -38,6 +39,17 @@ final class CarSharingController extends AbstractController
             $carSharing->setEcoFriendly(
                 $carSharing->getVehicle()->getEnergy()->getName() === 'Électrique'
             );
+
+            // Extraire automatiquement les villes depuis les adresses
+            $startCity = (new UnicodeString($carSharing->getStartAddress()))->afterLast(',')->trim()->title(true);
+            $endCity = (new UnicodeString($carSharing->getEndAddress()))->afterLast(',')->trim()->title(true);
+
+            $carSharing->setStartCity($startCity);
+            $carSharing->setEndCity($endCity);
+
+            // État initial du trajet : En attente
+            $status = $em->getRepository(\App\Entity\CarSharingStates::class)->findOneBy(['status' => 'En attente']);
+            $carSharing->setStatus($status);
 
             // Retirer 2 crédits au chauffeur
             $user->setCredit($user->getCredit() - 2);

@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un véhicule{% endblock %}
+
+{% block body %}
+{% include 'components/menu.html.twig' %}
+<div class="container py-5">
+    <h2 class="mb-4">➕ Ajouter un véhicule</h2>
+
+    {{ form_start(form) }}
+        {{ form_row(form.brand) }}
+        {{ form_row(form.model) }}
+        {{ form_row(form.color) }}
+        {{ form_row(form.plate) }}
+        {{ form_row(form.date_first_registration) }}
+        {{ form_row(form.seats) }}
+
+        <button class="btn btn-success mt-3">Valider</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_user_dashboard') }}" class="btn btn-outline-secondary mt-4">← Retour</a>
+</div>
+{% endblock %}

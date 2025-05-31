@@ -18,6 +18,12 @@ class CarSharingType extends AbstractType
   public function buildForm(FormBuilderInterface $builder, array $options): void
   {
     $builder
+      ->add('startCity', TextType::class, [
+        'label' => 'Ville de départ',
+      ])
+      ->add('endCity', TextType::class, [
+        'label' => 'Ville d’arrivée',
+      ])
       ->add('start_address', TextType::class, [
         'label' => 'Adresse de départ'
       ])

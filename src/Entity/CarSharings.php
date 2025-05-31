@@ -17,25 +17,31 @@ class CarSharings
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $start_address = null;
+    private ?string $startAddress = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $end_address = null;
+    private ?string $startCity = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $endAddress = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $endCity = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $date_start = null;
+    private ?\DateTimeInterface $dateStart = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $date_end = null;
+    private ?\DateTimeInterface $dateEnd = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
     private ?string $price = null;
 
     #[ORM\Column]
-    private ?int $total_places = null;
+    private ?int $totalPlaces = null;
 
     #[ORM\Column]
-    private ?int $available_places = null;
+    private ?int $availablePlaces = null;
 
     #[ORM\Column]
     private ?bool $eco_friendly = null;
@@ -77,45 +83,67 @@ class CarSharings
 
     public function getStartAddress(): ?string
     {
-        return $this->start_address;
+        return $this->startAddress;
     }
 
-    public function setStartAddress(string $start_address): static
+    public function setStartAddress(string $startAddress): static
     {
-        $this->start_address = $start_address;
+        $this->startAddress = $startAddress;
         return $this;
     }
 
     public function getEndAddress(): ?string
     {
-        return $this->end_address;
+        return $this->endAddress;
     }
 
-    public function setEndAddress(string $end_address): static
+    public function setEndAddress(string $endAddress): static
     {
-        $this->end_address = $end_address;
+        $this->endAddress = $endAddress;
+        return $this;
+    }
+
+    public function getStartCity(): ?string
+    {
+        return $this->startCity;
+    }
+
+    public function setStartCity(string $startCity): static
+    {
+        $this->startCity = $startCity;
+        return $this;
+    }
+
+    public function getEndCity(): ?string
+    {
+        return $this->endCity;
+    }
+
+    public function setEndCity(string $endCity): static
+    {
+        $this->endCity = $endCity;
         return $this;
     }
 
     public function getDateStart(): ?\DateTimeInterface
     {
-        return $this->date_start;
+        return $this->dateStart;
     }
 
-    public function setDateStart(\DateTimeInterface $date_start): static
+    public function setDateStart(\DateTimeInterface $dateStart): static
     {
-        $this->date_start = $date_start;
+        $this->dateStart = $dateStart;
         return $this;
     }
 
     public function getDateEnd(): ?\DateTimeInterface
     {
-        return $this->date_end;
+        return $this->dateEnd;
     }
 
     public function setDateEnd(\DateTimeInterface $date_end): static
     {
-        $this->date_end = $date_end;
+        $this->dateEnd = $date_end;
         return $this;
     }
 
@@ -132,23 +160,23 @@ class CarSharings
 
     public function getTotalPlaces(): ?int
     {
-        return $this->total_places;
+        return $this->totalPlaces;
     }
 
-    public function setTotalPlaces(int $total_places): static
+    public function setTotalPlaces(int $totalPlaces): static
     {
-        $this->total_places = $total_places;
+        $this->totalPlaces = $totalPlaces;
         return $this;
     }
 
     public function getAvailablePlaces(): ?int
     {
-        return $this->available_places;
+        return $this->availablePlaces;
     }
 
-    public function setAvailablePlaces(int $available_places): static
+    public function setAvailablePlaces(int $availablePlaces): static
     {
-        $this->available_places = $available_places;
+        $this->availablePlaces = $availablePlaces;
         return $this;
     }
 

@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choix des rôles{% endblock %}
+
+{% block body %}
+{% include 'components/menu.html.twig' %}
+<div class="container py-4">
+    <h2 class="mb-4">Sélectionnez votre rôle</h2>
+
+    {{ form_start(form) }}
+        {{ form_row(form.roles) }}
+        <button class="btn btn-success mt-3">💾 Enregistrer</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_user_dashboard') }}" class="btn btn-outline-secondary mt-4">← Retour</a>
+</div>
+{% endblock %}

@@ -68,10 +68,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $updated_at = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Roles $role = null;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Suspensions::class, orphanRemoval: true)]
     private Collection $suspensions;
 
@@ -81,9 +77,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Reviews::class)]
     private Collection $reviews;
 
-    #[ORM\ManyToMany(targetEntity: Roles::class, inversedBy: 'users')]
-    #[ORM\JoinTable(name: 'user_roles')]
-    private Collection $rolesEntity;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vehicles::class, orphanRemoval: true)]
+    private Collection $vehicles;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPreferences::class, orphanRemoval: true)]
+    private Collection $userPreferences;
 
     private ?string $plainPassword = null;
 
@@ -92,8 +90,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->suspensions = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->reviews = new ArrayCollection();
-        $this->rolesEntity = new ArrayCollection();
         $this->credit = 20;
+        $this->vehicles = new ArrayCollection();
+        $this->userPreferences = new ArrayCollection();
     }
 
     public function setImageFile(?File $imageFile = null): void
@@ -270,14 +269,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getRole(): ?Roles
+    public function getVehicles(): Collection
     {
-        return $this->role;
+        return $this->vehicles;
     }
 
-    public function setRole(?Roles $role): static
+    public function addVehicle(Vehicles $vehicle): static
     {
-        $this->role = $role;
+        if (!$this->vehicles->contains($vehicle)) {
+            $this->vehicles->add($vehicle);
+            $vehicle->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVehicle(Vehicles $vehicle): static
+    {
+        if ($this->vehicles->removeElement($vehicle)) {
+            if ($vehicle->getUser() === $this) {
+                $vehicle->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUserPreferences(): Collection
+    {
+        return $this->userPreferences;
+    }
+
+    public function addUserPreference(UserPreferences $preference): static
+    {
+        if (!$this->userPreferences->contains($preference)) {
+            $this->userPreferences->add($preference);
+            $preference->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeUserPreference(UserPreferences $preference): static
+    {
+        if ($this->userPreferences->removeElement($preference)) {
+            if ($preference->getUser() === $this) {
+                $preference->setUser(null);
+            }
+        }
         return $this;
     }
 
@@ -349,28 +387,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($review->getUser() === $this) {
                 $review->setUser(null);
             }
-        }
-        return $this;
-    }
-
-    public function getRolesEntity(): Collection
-    {
-        return $this->rolesEntity;
-    }
-
-    public function addRole(Roles $role): static
-    {
-        if (!$this->rolesEntity->contains($role)) {
-            $this->rolesEntity[] = $role;
-            $role->addUser($this);
-        }
-        return $this;
-    }
-
-    public function removeRole(Roles $role): static
-    {
-        if ($this->rolesEntity->removeElement($role)) {
-            $role->removeUser($this);
         }
         return $this;
     }

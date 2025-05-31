@@ -9,7 +9,14 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">{{ carSharing.startAddress }} → {{ carSharing.endAddress }}</h5>
+            <h5 class="card-title">
+                {{ carSharing.startAddress }} → {{ carSharing.endAddress }}
+                {% if carSharing.ecoFriendly %}
+                    <span class="badge bg-success ms-2">🌱 Éco</span>
+                {% else %}
+                    <span class="badge bg-danger ms-2">❌ Non Éco</span>
+                {% endif %}
+            </h5>
             <p class="card-text">
                 <strong>Date de départ :</strong> {{ carSharing.dateStart|date('d/m/Y H:i') }}<br>
                 <strong>Date d’arrivée :</strong> {{ carSharing.dateEnd|date('d/m/Y H:i') }}<br>
@@ -68,7 +75,19 @@
                 <strong>Marque :</strong> {{ carSharing.vehicle.brand }}<br>
                 <strong>Modèle :</strong> {{ carSharing.vehicle.model }}<br>
                 <strong>Énergie :</strong> {{ carSharing.vehicle.energy.name }}
+                    {% if carSharing.vehicle.energy.name == 'Électrique' %}
+                        <span class="badge bg-success ms-2">🌱 Éco</span>
+                    {% else %}
+                        <span class="badge bg-danger ms-2">❌ Non Éco</span>
+                    {% endif %}
             </p>
+
+            <h3>🔋 Énergie du véhicule</h3>
+            <ul>
+                <li><strong>Type :</strong> {{ carSharing.vehicle.energy.name }}</li>
+                <li><strong>Autonomie :</strong> {{ carSharing.vehicle.energy.autonomyKm }} km</li>
+                <li><strong>Émissions CO₂ :</strong> {{ carSharing.vehicle.energy.co2Emission }} g/km</li>
+            </ul>
         </div>
     </div>
 

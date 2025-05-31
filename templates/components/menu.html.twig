@@ -11,20 +11,33 @@
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ path('app_home') }}">Accueil</a>
+                    <a class="nav-link text-white" href="{{ path('app_home') }}">🏠 Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ path('app_search') }}">Covoiturages</a>
+                    <a class="nav-link text-white" href="{{ path('app_search') }}">🚗 Covoiturages</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ path('app_login') }}">Connexion</a>
+                    <a class="nav-link text-white" href="#">📞 Contact</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ path('app_car_sharing_new') }}">Nouveau</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#">Contact</a>
-                </li>
+
+                {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ path('app_car_sharing_new') }}">➕ Proposer un trajet</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ path('app_user_dashboard') }}">👤 Mon espace</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ path('app_user_roles') }}">🛠 Choisir rôle</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ path('app_logout') }}">🚪 Déconnexion</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ path('app_login') }}">🔐 Connexion</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

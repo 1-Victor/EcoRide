@@ -13,6 +13,12 @@ class Vehicles
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 20)]
+    private ?string $plate = null;
+
+    #[ORM\Column]
+    private ?int $seats = null;
+
     #[ORM\Column(length: 50)]
     private ?string $model = null;
 
@@ -35,9 +41,8 @@ class Vehicles
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Brands $brand = null;
+    #[ORM\Column(length: 100)]
+    private ?string $brand = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -46,6 +51,29 @@ class Vehicles
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPlate(): ?string
+    {
+        return $this->plate;
+    }
+
+    public function setPlate(string $plate): static
+    {
+        $this->plate = $plate;
+        return $this;
+    }
+
+
+    public function getSeats(): ?int
+    {
+        return $this->seats;
+    }
+
+    public function setSeats(int $seats): static
+    {
+        $this->seats = $seats;
+        return $this;
     }
 
     public function getModel(): ?string
@@ -125,12 +153,12 @@ class Vehicles
         return $this;
     }
 
-    public function getBrand(): ?Brands
+    public function getBrand(): ?string
     {
         return $this->brand;
     }
 
-    public function setBrand(?Brands $brand): static
+    public function setBrand(string $brand): static
     {
         $this->brand = $brand;
         return $this;

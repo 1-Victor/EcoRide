@@ -49,7 +49,7 @@ class SearchController extends AbstractController
             'from' => $from,
             'to' => $to,
             'date' => $date,
-            'results' => $results,
+            'carSharings' => $results,
             'alternative' => $alternative,
             'eco' => $eco,
             'max_price' => $maxPrice,

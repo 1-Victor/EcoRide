@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace utilisateur{% endblock %}
+
+{% block body %}
+{% include 'components/menu.html.twig' %}
+<div class="container py-5">
+    <h2 class="mb-4">Espace personnel de {{ app.user.username }}</h2>
+
+    <hr class="my-4">
+
+    <p>Bienvenue {{ app.user.firstname }} {{ app.user.lastname }}.</p>
+
+    <div class="alert alert-primary">
+        <h5>🧑‍💼 Votre profil utilisateur :</h5>
+        <ul class="mb-0">
+            {% if 'ROLE_CHAUFFEUR' in app.user.roles %}
+                <li>🚗 Rôle : <strong>Chauffeur</strong></li>
+            {% endif %}
+            {% if 'ROLE_PASSAGER' in app.user.roles %}
+                <li>🧍‍♂️ Rôle : <strong>Passager</strong></li>
+            {% endif %}
+            {% if 'ROLE_ADMIN' in app.user.roles %}
+                <li>🛡️ Rôle : <strong>Administrateur</strong></li>
+            {% endif %}
+            {% if 'ROLE_EMPLOYEE' in app.user.roles %}
+                <li>🏢 Rôle : <strong>Employé</strong></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <h3>🚗 Mes véhicules</h3>
+    <a href="{{ path('app_vehicle_new') }}" class="btn btn-outline-success btn-sm mb-3">➕ Ajouter un véhicule</a>
+
+    {% if vehicles is empty %}
+        <p>Aucun véhicule enregistré.</p>
+    {% else %}
+        <ul class="list-group">
+            {% for v in vehicles %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        {{ v.brand }} {{ v.model }} - {{ v.color }}  <br>
+                        {{ v.seats }} places • immatriculé le {{ v.dateFirstRegistration|date('d/m/Y') }}<br>
+                        🔋 <strong>Énergie :</strong> {{ v.energy.name }} • {{ v.energy.autonomyKm }} km • {{ v.energy.co2Emission }} g/km
+                            {% if v.energy.name == 'Électrique' %}
+                                <span class="badge bg-success ms-2">🌱 Éco</span>
+                            {% else %}
+                                <span class="badge bg-danger ms-2">❌ Non Éco</span>
+                            {% endif %}
+                    </div>
+                    <form method="post" action="{{ path('app_vehicle_delete', { id: v.id }) }}" onsubmit="return confirm('Supprimer ce véhicule ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ v.id) }}">
+                        <button class="btn btn-sm btn-outline-danger">🗑️</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h3>🛠 Mes préférences</h3>
+    <a href="{{ path('app_user_preference_add') }}" class="btn btn-outline-success btn-sm mb-3">➕ Ajouter une préférence</a>
+
+    {% if preferences is empty %}
+        <p>Aucune préférence enregistrée.</p>
+    {% else %}
+        <ul>
+            <ul class="list-group">
+                {% for pref in preferences %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ pref.preference.name }}</strong> : {{ pref.value }}
+                        </div>
+                        <form method="post" action="{{ path('app_user_preference_delete', { id: pref.id }) }}" onsubmit="return confirm('Supprimer cette préférence ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pref.id) }}">
+                            <button class="btn btn-sm btn-outline-danger">🗑️</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </ul>
+    {% endif %}
+
+    <p class="mt-4"><em>Interface en cours de personnalisation 🛠️</em></p>
+</div>
+{% endblock %}
