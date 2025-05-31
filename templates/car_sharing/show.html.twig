@@ -43,12 +43,12 @@
             </p>
 
             <h6>Préférences du conducteur :</h6>
-            {% if carSharing.user.preferences is empty %}
+            {% if carSharing.user.userPreferences is empty %}
                 <p>Aucune préférence enregistrée.</p>
             {% else %}
                 <ul>
-                    {% for pref in carSharing.user.preferences %}
-                        <li>{{ pref.name }}</li>
+                    {% for userPref in carSharing.user.userPreferences %}
+                        <li>{{ userPref.preference.name }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
@@ -91,4 +91,5 @@
         </div>
     </div>
 
-    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">← Retour à l’accuei_
+    <a href="{{ path('app_home')}}">retour à l'accueil</a>
+{% endblock %}

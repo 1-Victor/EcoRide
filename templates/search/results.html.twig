@@ -4,6 +4,7 @@
 
 {% block body %}
 {% include 'components/menu.html.twig' %}
+
 <div class="container py-4">
     <h2>Résultats pour le trajet {{ from }} → {{ to }} le {{ date|date('d/m/Y') }}</h2>
 
@@ -27,7 +28,7 @@
         </div>
     {% endif %}
 
-    {% if results is empty %}
+    {% if carSharings is empty %}
         <p class="text-muted">Aucun covoiturage trouvé.</p>
 
         {% if alternative %}
@@ -41,7 +42,7 @@
         {% endif %}
     {% else %}
         <div class="row">
-            {% for item in results %}
+            {% for item in carSharings %}
                 {% set duration = item.dateStart.diff(item.dateEnd) %}
                 {% set duration_minutes = (duration.h * 60) + duration.i %}
                 {% set notes = item.user.reviews|map(r => r.note)|filter(n => n is not null) %}

@@ -13,48 +13,42 @@ class SearchController extends AbstractController
     #[Route('/recherche', name: 'app_search')]
     public function search(Request $request, CarSharingsRepository $repo): Response
     {
-        // ⚠️ Si le bouton reset est coché, rediriger vers l'accueil
-        if ($request->query->get('reset')) {
-            return $this->redirectToRoute('app_home');
-        }
-
         $from = $request->query->get('from');
         $to = $request->query->get('to');
-        $dateString = $request->query->get('date');
-        $date = $dateString ? \DateTime::createFromFormat('Y-m-d', $dateString) : null;
+        $date = $request->query->get('date');
 
-        // 🔄 Filtres avancés
         $eco = $request->query->getBoolean('eco');
         $maxPrice = $request->query->get('max_price');
         $maxDuration = $request->query->get('max_duration');
         $minRating = $request->query->get('min_rating');
 
-        $results = [];
+        $carSharings = [];
         $alternative = null;
 
         if ($from && $to && $date) {
-            $results = $repo->searchByCriteria($from, $to, $date, [
+            $dateObj = new \DateTime($date);
+            $carSharings = $repo->searchByCriteria($from, $to, $dateObj, [
                 'eco' => $eco,
                 'max_price' => $maxPrice,
                 'max_duration' => $maxDuration,
                 'min_rating' => $minRating,
             ]);
 
-            if (empty($results)) {
-                $alternative = $repo->getClosestCarSharingAfterDate($from, $to, $date);
+            if (empty($carSharings)) {
+                $alternative = $repo->getClosestCarSharingAfterDate($from, $to, $dateObj);
             }
         }
 
         return $this->render('search/results.html.twig', [
             'from' => $from,
             'to' => $to,
-            'date' => $date,
-            'carSharings' => $results,
-            'alternative' => $alternative,
+            'date' => new \DateTime($date),
             'eco' => $eco,
             'max_price' => $maxPrice,
             'max_duration' => $maxDuration,
             'min_rating' => $minRating,
+            'carSharings' => $carSharings, // ⚠️ c’est cette ligne qui manquait ou était vide
+            'alternative' => $alternative,
         ]);
     }
 }

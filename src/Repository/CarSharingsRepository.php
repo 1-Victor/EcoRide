@@ -16,9 +16,10 @@ class CarSharingsRepository extends ServiceEntityRepository
     /**
      * Recherche les trajets disponibles selon les critères : ville départ, ville arrivée, date.
      *
-     * @param string|null
-     * @param string|null
-     * @param \DateTimeInterface|null
+     * @param string|null $from
+     * @param string|null $to
+     * @param \DateTimeInterface|null $date
+     * @param array $filters
      * @return CarSharings[]
      */
     public function searchByCriteria(?string $from, ?string $to, ?\DateTimeInterface $date, array $filters = []): array
@@ -31,9 +32,9 @@ class CarSharingsRepository extends ServiceEntityRepository
         $end = new \DateTime($date->format('Y-m-d') . ' 23:59:59');
 
         $qb = $this->createQueryBuilder('c')
+            ->select('c', 'u', 'v')
             ->join('c.user', 'u')
             ->join('c.vehicle', 'v')
-            ->addSelect('u', 'v')
             ->where('(c.startAddress = :from OR c.startCity = :from)')
             ->andWhere('(c.endAddress = :to OR c.endCity = :to)')
             ->andWhere('c.dateStart BETWEEN :start AND :end')
@@ -52,28 +53,22 @@ class CarSharingsRepository extends ServiceEntityRepository
                 ->setParameter('max_price', $filters['max_price']);
         }
 
-        $results = $qb->getQuery()->getResult();
+        if (!empty($filters['max_duration'])) {
+            // TIMESTAMPDIFF en MySQL : durée entre deux timestamps en minutes
+            $qb->andWhere("TIMESTAMPDIFF(MINUTE, c.dateStart, c.dateEnd) <= :max_duration")
+                ->setParameter('max_duration', $filters['max_duration']);
+        }
 
-        return array_filter($results, function ($covoiturage) use ($filters) {
-            $valid = true;
+        if (!empty($filters['min_rating'])) {
+            // Joindre les reviews pour calculer la note moyenne
+            $qb->join('u.reviews', 'r')
+                ->groupBy('c.id')
+                ->having('AVG(r.note) >= :min_rating')
+                ->setParameter('min_rating', $filters['min_rating']);
+        }
 
-            if (!empty($filters['max_duration'])) {
-                $duration = $covoiturage->getDateStart()->diff($covoiturage->getDateEnd());
-                $minutes = ($duration->h * 60) + $duration->i;
-                $valid = $valid && ($minutes <= $filters['max_duration']);
-            }
-
-            if (!empty($filters['min_rating'])) {
-                $notes = array_map(fn($r) => $r->getNote(), $covoiturage->getUser()->getReviews()->toArray());
-                $notes = array_filter($notes);
-                $avg = count($notes) > 0 ? array_sum($notes) / count($notes) : 0;
-                $valid = $valid && ($avg >= $filters['min_rating']);
-            }
-
-            return $valid;
-        });
+        return $qb->getQuery()->getResult();
     }
-
 
     public function getClosestCarSharingAfterDate(string $from, string $to, \DateTimeInterface $date): ?CarSharings
     {
