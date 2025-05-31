@@ -82,6 +82,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPreferences::class, orphanRemoval: true)]
     private Collection $userPreferences;
 
+    #[ORM\ManyToMany(targetEntity: CarSharings::class)]
+    private Collection $carSharingsParticipated;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: CarSharings::class)]
+    private Collection $carSharings;
+
     private ?string $plainPassword = null;
 
     public function __construct()
@@ -92,6 +98,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->credit = 20;
         $this->vehicles = new ArrayCollection();
         $this->userPreferences = new ArrayCollection();
+        $this->carSharingsParticipated = new ArrayCollection();
+        $this->carSharings = new ArrayCollection();
     }
 
     public function setImageFile(?File $imageFile = null): void
@@ -387,6 +395,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $review->setUser(null);
             }
         }
+        return $this;
+    }
+
+    public function getCarSharingsParticipated(): Collection
+    {
+        return $this->carSharingsParticipated;
+    }
+
+    public function addCarSharingParticipation(CarSharings $carSharing): static
+    {
+        if (!$this->carSharingsParticipated->contains($carSharing)) {
+            $this->carSharingsParticipated->add($carSharing);
+        }
+        return $this;
+    }
+
+    public function getCarSharings(): Collection
+    {
+        return $this->carSharings;
+    }
+
+    public function removeCarSharingParticipation(CarSharings $carSharing): static
+    {
+        $this->carSharingsParticipated->removeElement($carSharing);
         return $this;
     }
 }

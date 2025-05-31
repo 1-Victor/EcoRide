@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmation participation{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2>Confirmer votre participation</h2>
+    <p>
+        Ce trajet coûte <strong>{{ carSharing.price }} crédits</strong>.<br>
+        Il vous restera <strong>{{ app.user.credit - carSharing.price }}</strong> crédits après la réservation.
+    </p>
+
+    <p>Souhaitez-vous confirmer votre participation à ce covoiturage ?</p>
+
+    <div class="mt-4">
+        <a href="{{ path('carsharing_participate', { id: carSharing.id, confirm: 'true' }) }}"
+          class="btn btn-success me-2">
+            ✅ Oui, confirmer
+        </a>
+        <a href="{{ path('app_trajet_show', { id: carSharing.id }) }}"
+          class="btn btn-danger">
+            ❌ Non, annuler
+        </a>
+    </div>
+</div>
+{% endblock %}

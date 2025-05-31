@@ -5,6 +5,21 @@
 {% block body %}
 {% include 'components/menu.html.twig' %}
 <div class="container py-5">
+
+    {% if not app.user %}
+        <a href="{{ path('app_login') }}" class="btn btn-warning mt-4">
+            Se connecter pour participer
+        </a>
+    {% elseif carSharing.availablePlaces == 0 %}
+        <div class="alert alert-danger mt-4">Plus aucune place disponible.</div>
+    {% elseif app.user.credit < carSharing.price %}
+        <div class="alert alert-danger mt-4">Vous n'avez pas assez de crédits pour participer.</div>
+    {% else %}
+        <a href="{{ path('carsharing_participate', { id: carSharing.id }) }}" class="btn btn-primary mt-4">
+            Participer à ce covoiturage
+        </a>
+    {% endif %}
+
     <h2 class="mb-4">Détail du trajet</h2>
 
     <div class="card mb-4">

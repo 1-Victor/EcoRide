@@ -13,9 +13,28 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Entity\UserPreferences;
 use App\Form\UserPreferencesType;
 use App\Form\UserRolesType;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class UserController extends AbstractController
 {
+    #[Route('/espace/chauffeur', name: 'app_driver_dashboard')]
+    public function driverDashboard(Security $security): Response
+    {
+        /** @var \App\Entity\User $user */
+        $user = $security->getUser();
+
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // On récupère uniquement les trajets où l'utilisateur est le conducteur
+        $carSharings = $user->getCarSharings();
+
+        return $this->render('user/driver_dashboard.html.twig', [
+            'carSharings' => $carSharings,
+        ]);
+    }
+
     #[Route('/mon-compte/roles', name: 'app_user_roles')]
     #[IsGranted('ROLE_USER')]
     public function chooseRoles(Request $request, EntityManagerInterface $em): Response

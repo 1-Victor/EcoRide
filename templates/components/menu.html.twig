@@ -30,6 +30,11 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ path('app_user_roles') }}">🛠 Choisir rôle</a>
                     </li>
+                    {% if is_granted('ROLE_USER') %}
+                        <li>
+                            <a href="{{ path('app_driver_dashboard') }}">🚘 Espace Chauffeur</a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ path('app_logout') }}">🚪 Déconnexion</a>
                     </li>
