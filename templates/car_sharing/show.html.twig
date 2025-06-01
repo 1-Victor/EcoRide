@@ -7,22 +7,24 @@
 
 <div class="container py-5">
 
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Détail du trajet</h2>
+
     {# Bouton participation #}
     {% if not app.user %}
-        <a href="{{ path('app_login') }}" class="btn btn-warning mt-4">
+        <a href="{{ path('app_login') }}" class="btn btn-warning">
             Se connecter pour participer
         </a>
     {% elseif carSharing.availablePlaces == 0 %}
-        <div class="alert alert-danger mt-4">Plus aucune place disponible.</div>
+        <div class="alert alert-danger mb-0 ms-3">Plus aucune place disponible.</div>
     {% elseif app.user.credit < carSharing.price %}
-        <div class="alert alert-danger mt-4">Vous n'avez pas assez de crédits pour participer.</div>
+        <div class="alert alert-danger mb-0 ms-3">Vous n'avez pas assez de crédits pour participer.</div>
     {% else %}
-        <a href="{{ path('carsharing_participate', { id: carSharing.id }) }}" class="btn btn-primary mt-4">
+        <a href="{{ path('carsharing_participate', { id: carSharing.id }) }}" class="btn btn-primary">
             Participer à ce covoiturage
         </a>
     {% endif %}
-
-    <h2 class="mb-4">Détail du trajet</h2>
+</div>
 
     {# Trajet #}
     <div class="card mb-4">
@@ -51,9 +53,9 @@
             {% if carSharing.user.imageName %}
                 <a href="{{ path('user_profile', { id: carSharing.user.id }) }}">
                     <img src="{{ asset('uploads/users/image_profile/' ~ carSharing.user.imageName) }}"
-                         alt="Photo de {{ carSharing.user.username }}"
-                         class="rounded-circle mb-2"
-                         style="width: 60px; height: 60px; object-fit: cover;">
+                        alt="Photo de {{ carSharing.user.username }}"
+                        class="rounded-circle mb-2"
+                        style="width: 60px; height: 60px; object-fit: cover;">
                 </a>
             {% endif %}
             <p>
@@ -153,8 +155,5 @@
             </ul>
         </div>
     </div>
-
-    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">🏠 Retour à l'accueil</a>
-
 </div>
 {% endblock %}
