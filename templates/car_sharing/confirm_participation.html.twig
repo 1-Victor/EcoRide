@@ -3,24 +3,27 @@
 {% block title %}Confirmation participation{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h2>Confirmer votre participation</h2>
-    <p>
-        Ce trajet coûte <strong>{{ carSharing.price }} crédits</strong>.<br>
-        Il vous restera <strong>{{ app.user.credit - carSharing.price }}</strong> crédits après la réservation.
-    </p>
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-sm p-4" style="min-width: 400px; max-width: 600px;">
+        <h2 class="text-success mb-4 text-center"><i class="bi bi-patch-check-fill"></i> Confirmation</h2>
 
-    <p>Souhaitez-vous confirmer votre participation à ce covoiturage ?</p>
+        <p class="text-center">
+            Ce trajet coûte <strong>{{ carSharing.price }} crédits</strong>.<br>
+            Il vous restera <strong>{{ app.user.credit - carSharing.price }}</strong> crédits après la réservation.
+        </p>
 
-    <div class="mt-4">
-        <a href="{{ path('carsharing_participate', { id: carSharing.id, confirm: 'true' }) }}"
-          class="btn btn-success me-2">
-            ✅ Oui, confirmer
-        </a>
-        <a href="{{ path('app_trajet_show', { id: carSharing.id }) }}"
-          class="btn btn-danger">
-            ❌ Non, annuler
-        </a>
+        <p class="text-center">Souhaitez-vous confirmer votre participation à ce covoiturage ?</p>
+
+        <div class="d-flex justify-content-center mt-4 gap-3">
+            <a href="{{ path('carsharing_participate', { id: carSharing.id, confirm: 'true' }) }}"
+                class="btn btn-success px-4">
+                ✅ Oui, confirmer
+            </a>
+            <a href="{{ path('app_trajet_show', { id: carSharing.id }) }}"
+                class="btn btn-outline-danger px-4">
+                ❌ Non, annuler
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,111 +1,138 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Espace utilisateur{% endblock %}
+{% block title %}Profil utilisateur{% endblock %}
 
 {% block body %}
 {% include 'components/menu.html.twig' %}
+
 <div class="container py-5">
-    <h2 class="mb-4">Espace personnel de {{ app.user.username }}</h2>
+    <div class="row mb-4">
+        <div class="col-md-2">
+            {% if user.imageName %}
+                <img src="{{ asset('uploads/users/image_profile/' ~ user.imageName) }}" alt="Photo de {{ user.username }}" class="img-thumbnail rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+            {% else %}
+                <div class="bg-secondary text-white text-center rounded-circle" style="width: 100px; height: 100px; line-height: 100px;">
+                    <img src="{{ asset('images/image_default.jpg') }}" alt="Photo de base" class="img-thumbnail rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-10">
+            <h4 class="p-3">{{ user.firstname }} {{ user.lastname }}</h4>
+            <p>🆔 Pseudo : {{ user.username }}</p>
+            <p>📞 Téléphone : {{ user.phone }}</p>
+            <p>⭐ Note moyenne : {{ user.getAverageRating() }}/5</p>
+            {% if app.user and app.user.id == user.id %}
+                <p>💰 Crédits : {{ user.getcredit() }}</p>
+            {% endif %}
 
-    <hr class="my-4">
+            <h5>Rôles :</h5>
+            <ul>
+                {% for role in user.roles %}
+                    <li>
+                        {% if role == 'ROLE_USER' %}👤 Utilisateur
+                        {% elseif role == 'ROLE_CHAUFFEUR' %}🚗 Chauffeur
+                        {% elseif role == 'ROLE_PASSAGER' %}🧍‍♂️ Passager
+                        {% elseif role == 'ROLE_ADMIN' %}🛡️ Administrateur
+                        {% elseif role == 'ROLE_EMPLOYEE' %}🏢 Employé
+                        {% else %}{{ role }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
 
-    <p>Bienvenue {{ app.user.firstname }} {{ app.user.lastname }}.</p>
-
-    <div class="alert alert-primary">
-        <h5>🧑‍💼 Votre profil utilisateur :</h5>
-        <ul class="mb-0">
-            {% if 'ROLE_CHAUFFEUR' in app.user.roles %}
-                <li>🚗 Rôle : <strong>Chauffeur</strong></li>
+            {% if app.user and app.user.id == user.id %}
+                <a href="{{ path('app_user_roles') }}" class="btn btn-outline-secondary btn-sm">🎚 Modifier mes rôles</a>
+                <a class="btn btn-outline-secondary btn-sm" href="{{ path('app_driver_dashboard') }}">🚘 Espace Chauffeur</a>
             {% endif %}
-            {% if 'ROLE_PASSAGER' in app.user.roles %}
-                <li>🧍‍♂️ Rôle : <strong>Passager</strong></li>
-            {% endif %}
-            {% if 'ROLE_ADMIN' in app.user.roles %}
-                <li>🛡️ Rôle : <strong>Administrateur</strong></li>
-            {% endif %}
-            {% if 'ROLE_EMPLOYEE' in app.user.roles %}
-                <li>🏢 Rôle : <strong>Employé</strong></li>
-            {% endif %}
-        </ul>
+        </div>
     </div>
 
-    <h2 class="mt-5">Mes trajets réservés</h2>
+    <hr>
 
-    {% if app.user.carSharingsParticipated is empty %}
-        <div class="alert alert-info mt-3">
-            Vous n'avez pas encore réservé de covoiturage.
-        </div>
+    <h3>🚗 Trajets proposés</h3>
+    {% if user.carSharings is empty %}
+        <div class="alert alert-info">Aucun trajet proposé.</div>
     {% else %}
-        <ul class="list-group mt-3">
-            {% for trajet in app.user.carSharingsParticipated %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        🚗 <strong>{{ trajet.startCity }}</strong> → <strong>{{ trajet.endCity }}</strong><br>
-                        Départ : {{ trajet.dateStart|date('d/m/Y H:i') }}<br>
-                        Prix payé : {{ trajet.price }} crédits
-                    </div>
-                    <a href="{{ path('app_trajet_show', { id: trajet.id }) }}" class="btn btn-outline-primary btn-sm">
-                        Voir le trajet
-                    </a>
-                    <a href="{{ path('carsharing_cancel', { id: trajet.id }) }}" class="btn btn-outline-danger btn-sm mt-2">
-                        ❌ Annuler ma participation
-                    </a>
+        <ul class="list-group mb-4">
+            {% for trajet in user.carSharings %}
+                <li class="list-group-item">
+                    {{ trajet.startAddress }} → {{ trajet.endAddress }} <br>
+                    📅 {{ trajet.dateStart|date('d/m/Y H:i') }} — 💶 {{ trajet.price }} €
+                    <a href="{{ path('app_trajet_show', { id: trajet.id }) }}" class="btn btn-sm btn-outline-primary float-end">Voir</a>
                 </li>
             {% endfor %}
         </ul>
     {% endif %}
 
-    <h3>🚗 Mes véhicules</h3>
-    <a href="{{ path('app_vehicle_new') }}" class="btn btn-outline-success btn-sm mb-3">➕ Ajouter un véhicule</a>
+    <h3>🧍‍♂️ Trajets réservés</h3>
+    {% if user.carSharingsParticipated is empty %}
+        <div class="alert alert-info">Aucun covoiturage réservé.</div>
+    {% else %}
+        <ul class="list-group mb-4">
+            {% for trajet in user.carSharingsParticipated %}
+                <li class="list-group-item">
+                    {{ trajet.startAddress }} → {{ trajet.endAddress }} <br>
+                    📅 {{ trajet.dateStart|date('d/m/Y H:i') }} — 💶 {{ trajet.price }} €
+                    <a href="{{ path('app_trajet_show', { id: trajet.id }) }}" class="btn btn-sm btn-outline-primary float-end">Voir</a>
+                    {% if app.user and app.user.id == user.id %}
+                        <a href="{{ path('carsharing_cancel', { id: trajet.id }) }}" class="btn btn-sm btn-outline-danger float-end me-2">❌ Annuler</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h3>🚘 Véhicules</h3>
+    {% if app.user and app.user.id == user.id %}
+        <a href="{{ path('app_vehicle_new') }}" class="btn btn-outline-success btn-sm mb-2"><i class="bi bi-plus-lg p-1"></i> Ajouter un véhicule</a>
+    {% endif %}
 
     {% if vehicles is empty %}
         <p>Aucun véhicule enregistré.</p>
     {% else %}
-        <ul class="list-group">
+        <ul class="list-group mb-4">
             {% for v in vehicles %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                        {{ v.brand }} {{ v.model }} - {{ v.color }}  <br>
-                        {{ v.seats }} places • immatriculé le {{ v.dateFirstRegistration|date('d/m/Y') }}<br>
-                        🔋 <strong>Énergie :</strong> {{ v.energy.name }} • {{ v.energy.autonomyKm }} km • {{ v.energy.co2Emission }} g/km
-                            {% if v.energy.name == 'Électrique' %}
-                                <span class="badge bg-success ms-2">🌱 Éco</span>
-                            {% else %}
-                                <span class="badge bg-danger ms-2">❌ Non Éco</span>
-                            {% endif %}
+                        {{ v.brand }} {{ v.model }} - {{ v.color }}<br>
+                        {{ v.seats }} places – {{ v.energy.name }} – {{ v.energy.autonomyKm }} km – {{ v.energy.co2Emission }} g/km
                     </div>
-                    <form method="post" action="{{ path('app_vehicle_delete', { id: v.id }) }}" onsubmit="return confirm('Supprimer ce véhicule ?');">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ v.id) }}">
-                        <button class="btn btn-sm btn-outline-danger">🗑️</button>
-                    </form>
+                    {% if app.user and app.user.id == user.id %}
+                        <form method="post" action="{{ path('app_vehicle_delete', { id: v.id }) }}" onsubmit="return confirm('Supprimer ce véhicule ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ v.id) }}">
+                            <button class="btn btn-sm">🗑️</button>
+                        </form>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
     {% endif %}
 
-    <h3>🛠 Mes préférences</h3>
-    <a href="{{ path('app_user_preference_add') }}" class="btn btn-outline-success btn-sm mb-3">➕ Ajouter une préférence</a>
+    <h3>🛠 Préférences</h3>
+    {% if app.user and app.user.id == user.id %}
+        <a href="{{ path('app_user_preference_add') }}" class="btn btn-outline-success btn-sm mb-2"><i class="bi bi-plus-lg p-1"></i> Ajouter une préférence</a>
+    {% endif %}
 
     {% if preferences is empty %}
-        <p>Aucune préférence enregistrée.</p>
+        <p>Aucune préférence définie.</p>
     {% else %}
-        <ul>
-            <ul class="list-group">
-                {% for pref in preferences %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>{{ pref.preference.name }}</strong> : {{ pref.value }}
-                        </div>
+        <ul class="list-group">
+            {% for pref in preferences %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        {{ pref.preference.name }} : {{ pref.value }}
+                    </div>
+                    {% if app.user and app.user.id == user.id %}
                         <form method="post" action="{{ path('app_user_preference_delete', { id: pref.id }) }}" onsubmit="return confirm('Supprimer cette préférence ?');">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pref.id) }}">
-                            <button class="btn btn-sm btn-outline-danger">🗑️</button>
+                            <button class="btn btn-sm">🗑️</button>
                         </form>
-                    </li>
-                {% endfor %}
-            </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
         </ul>
     {% endif %}
 
-    <p class="mt-4"><em>Interface en cours de personnalisation 🛠️</em></p>
+    <p class="text-muted mt-4"><em>{% if app.user and app.user.id == user.id %}Voici votre espace personnel.{% else %}Ceci est une version publique du profil utilisateur.{% endif %}</em></p>
 </div>
 {% endblock %}

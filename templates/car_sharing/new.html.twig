@@ -4,25 +4,77 @@
 
 {% block body %}
 {% include 'components/menu.html.twig' %}
+
 <div class="container py-5">
-    <h2 class="mb-4">Proposer un nouveau covoiturage</h2>
+    <h2 class="mb-4 text-success"><i class="bi bi-plus-circle"></i> Proposer un nouveau covoiturage</h2>
 
     {% if app.user.credit < 2 %}
         <div class="alert alert-danger">
-            Vous n'avez pas assez de crédits pour proposer un trajet (minimum requis : 2 crédits).
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Vous n'avez pas assez de crédits pour proposer un trajet (minimum requis : <strong>2 crédits</strong>).
         </div>
     {% endif %}
 
-    {{ form_start(form) }}
-        {{ form_row(form.start_address) }}
-        {{ form_row(form.end_address) }}
-        {{ form_row(form.date_start) }}
-        {{ form_row(form.date_end) }}
-        {{ form_row(form.price) }}
-        {{ form_row(form.total_places) }}
-        {{ form_row(form.vehicle) }}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            {{ form_start(form) }}
 
-        <button type="submit" class="btn btn-success mt-3">Valider le trajet</button>
-    {{ form_end(form) }}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label"><i class="bi bi-building"></i> Ville de départ</label>
+                    {{ form_widget(form.startCity, { attr: { class: 'form-control' } }) }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><i class="bi bi-building"></i> Ville d’arrivée</label>
+                    {{ form_widget(form.endCity, { attr: { class: 'form-control' } }) }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label"><i class="bi bi-geo-alt-fill"></i> Adresse de départ</label>
+                    {{ form_widget(form.start_address, { attr: { class: 'form-control' } }) }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><i class="bi bi-geo-alt"></i> Adresse d’arrivée</label>
+                    {{ form_widget(form.end_address, { attr: { class: 'form-control' } }) }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label"><i class="bi bi-calendar-event"></i> Date de départ</label>
+                    {{ form_widget(form.date_start, { attr: { class: 'form-control' } }) }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><i class="bi bi-calendar-check"></i> Date d’arrivée</label>
+                    {{ form_widget(form.date_end, { attr: { class: 'form-control' } }) }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label"><i class="bi bi-currency-euro"></i> Prix</label>
+                    {{ form_widget(form.price, { attr: { class: 'form-control', 'min': '1' } }) }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label"><i class="bi bi-people-fill"></i> Nombre de places</label>
+                    {{ form_widget(form.total_places, { attr: { class: 'form-control', 'min': '1' } }) }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label"><i class="bi bi-car-front-fill"></i> Véhicule</label>
+                    {{ form_widget(form.vehicle, { attr: { class: 'form-select' } }) }}
+                </div>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Proposer le trajet
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
 </div>
 {% endblock %}

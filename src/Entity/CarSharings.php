@@ -70,10 +70,14 @@ class CarSharings
     #[ORM\OneToMany(mappedBy: 'carSharing', targetEntity: Reviews::class, orphanRemoval: true)]
     private Collection $reviews;
 
+    #[ORM\ManyToMany(mappedBy: 'carSharingsParticipated', targetEntity: User::class)]
+    private Collection $participants;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -302,5 +306,10 @@ class CarSharings
         }
 
         return $this;
+    }
+
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
     }
 }

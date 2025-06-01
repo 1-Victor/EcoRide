@@ -1,4 +1,4 @@
-<header class="navbar navbar-expand-lg bg-success bg-opacity-75 shadow-sm">
+<header class="navbar navbar-expand-lg bg-success sticky-top z-3">
     <div class="container-fluid">
         <a class="navbar-brand text-white fw-bold" href="{{ path('app_home') }}">
             EcoRide
@@ -11,36 +11,53 @@
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ path('app_home') }}">🏠 Accueil</a>
+                    <a class="nav-link text-white {% if app.request.get('_route') == 'app_home' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_home') }}">
+                        <i class="bi bi-house p-1"></i> Accueil
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ path('app_search') }}">🚗 Covoiturages</a>
+                    <a class="nav-link text-white {% if app.request.get('_route') starts with 'app_search' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_search') }}">
+                        <i class="bi bi-map p-1"></i> Covoiturages
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#">📞 Contact</a>
-                </li>
-
                 {% if app.user %}
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ path('app_car_sharing_new') }}">➕ Proposer un trajet</a>
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'app_car_sharing_new' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_car_sharing_new') }}">
+                            <i class="bi bi-plus-lg p-1"></i> Proposer
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ path('app_user_dashboard') }}">👤 Mon espace</a>
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'app_user_roles' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_user_roles') }}">
+                            <i class="bi bi-person-vcard-fill p-1"></i> Roles
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ path('app_user_roles') }}">🛠 Choisir rôle</a>
-                    </li>
-                    {% if is_granted('ROLE_USER') %}
-                        <li>
-                            <a href="{{ path('app_driver_dashboard') }}">🚘 Espace Chauffeur</a>
+                    {% if is_granted('ROLE_CHAUFFEUR') %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if app.request.get('_route') == 'app_driver_dashboard' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_driver_dashboard') }}">
+                                <i class="bi bi-car-front-fill p-1"></i> Historique
+                            </a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ path('app_logout') }}">🚪 Déconnexion</a>
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'app_user_dashboard' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_user_dashboard') }}">
+                            <i class="bi bi-person-fill p-1"></i> Profil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">
+                            <i class="bi bi-telephone-fill p-1"></i> Contact
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ path('app_logout') }}">
+                            <i class="bi bi-box-arrow-left p-1"></i> Déconnexion
+                        </a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ path('app_login') }}">🔐 Connexion</a>
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'app_login' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_login') }}">
+                            <i class="bi bi-box-arrow-in-left p-1"></i> Connexion
+                        </a>
                     </li>
                 {% endif %}
             </ul>

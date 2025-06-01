@@ -4,14 +4,41 @@
 
 {% block body %}
 {% include 'components/menu.html.twig' %}
-<div class="container py-4">
-    <h2 class="mb-4">Sélectionnez votre rôle</h2>
 
-    {{ form_start(form) }}
-        {{ form_row(form.roles) }}
-        <button class="btn btn-success mt-3">💾 Enregistrer</button>
-    {{ form_end(form) }}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 100px);">
+    <div class="card shadow-sm p-4" style="width: 100%; max-width: 420px;">
+        <h2 class="text-center text-success mb-4">
+            <i class="bi bi-person-plus-fill"></i> Sélection des rôles
+        </h2>
 
-    <a href="{{ path('app_user_dashboard') }}" class="btn btn-outline-secondary mt-4">← Retour</a>
+        {{ form_start(form) }}
+
+        <div class="mb-3">
+            <label class="form-label d-block"><i class="bi bi-person-check"></i> Choisissez votre rôle</label>
+
+            {% for choice in form.roles %}
+                <div class="form-check mb-2">
+                    {{ form_widget(choice, { attr: { class: 'form-check-input' } }) }}
+                    {{ form_label(choice, null, { label_attr: { class: 'form-check-label' } }) }}
+                </div>
+            {% endfor %}
+
+            {{ form_errors(form.roles) }}
+        </div>
+
+        <div class="d-grid">
+            <button class="btn btn-success" type="submit">
+                <i class="bi bi-save"></i> Enregistrer
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+
+        <div class="text-center mt-3">
+            <a href="{{ path('app_user_dashboard') }}" class="text-decoration-none text-muted">
+                <i class="bi bi-arrow-left-circle"></i> Retour au tableau de bord
+            </a>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 class CarSharingType extends AbstractType
 {
@@ -40,10 +41,24 @@ class CarSharingType extends AbstractType
       ])
       ->add('price', MoneyType::class, [
         'label' => 'Prix du trajet (€)',
-        'currency' => 'EUR'
+        'currency' => 'EUR',
+        'attr' => ['min' => 1],
+        'constraints' => [
+          new GreaterThanOrEqual([
+            'value' => 1,
+            'message' => 'Le prix ne peux pas être négatif'
+          ])
+        ]
       ])
       ->add('total_places', IntegerType::class, [
-        'label' => 'Nombre total de places'
+        'label' => 'Nombre total de places',
+        'attr' => ['min' => 1],
+        'constraints' => [
+          new GreaterThanOrEqual([
+            'value' => 1,
+            'message' => 'Le nombre de places doit être d’au moins 1.'
+          ])
+        ]
       ])
       ->add('vehicle', EntityType::class, [
         'label' => 'Véhicule utilisé',

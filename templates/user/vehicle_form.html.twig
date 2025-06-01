@@ -4,20 +4,77 @@
 
 {% block body %}
 {% include 'components/menu.html.twig' %}
+
 <div class="container py-5">
-    <h2 class="mb-4">➕ Ajouter un véhicule</h2>
+    <h2 class="mb-4 text-success"><i class="bi bi-plus-circle"></i> Ajouter un véhicule</h2>
 
-    {{ form_start(form) }}
-        {{ form_row(form.brand) }}
-        {{ form_row(form.model) }}
-        {{ form_row(form.color) }}
-        {{ form_row(form.plate) }}
-        {{ form_row(form.date_first_registration) }}
-        {{ form_row(form.seats) }}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            {{ form_start(form) }}
 
-        <button class="btn btn-success mt-3">Valider</button>
-    {{ form_end(form) }}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ form_label(form.brand) }}
+                    {{ form_widget(form.brand, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.brand) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.model) }}
+                    {{ form_widget(form.model, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.model) }}
+                </div>
+            </div>
 
-    <a href="{{ path('app_user_dashboard') }}" class="btn btn-outline-secondary mt-4">← Retour</a>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ form_label(form.color) }}
+                    {{ form_widget(form.color, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.color) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.plate) }}
+                    {{ form_widget(form.plate, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.plate) }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ form_label(form.date_first_registration) }}
+                    {{ form_widget(form.date_first_registration, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.date_first_registration) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.seats) }}
+                    {{ form_widget(form.seats, { 'attr': {'class': 'form-control', 'min': 1} }) }}
+                    {{ form_errors(form.seats) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.registration) }}
+                {{ form_widget(form.registration, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.registration) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.energy) }}
+                {{ form_widget(form.energy, { 'attr': {'class': 'form-select'} }) }}
+                {{ form_errors(form.energy) }}
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Valider
+                </button>
+            </div>
+
+            {{ form_end(form, { render_rest: false }) }}
+        </div>
+    </div>
+
+    <a href="{{ path('app_user_dashboard') }}" class="btn btn-outline-secondary mt-4">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
 </div>
 {% endblock %}

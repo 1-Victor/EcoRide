@@ -27,12 +27,21 @@ class SearchController extends AbstractController
 
         if ($from && $to && $date) {
             $dateObj = new \DateTime($date);
-            $carSharings = $repo->searchByCriteria($from, $to, $dateObj, [
+            $results = $repo->searchByCriteria($from, $to, $dateObj, [
                 'eco' => $eco,
                 'max_price' => $maxPrice,
-                'max_duration' => $maxDuration,
                 'min_rating' => $minRating,
             ]);
+
+            if (!empty($maxDuration)) {
+                $carSharings = array_filter($results, function ($trajet) use ($maxDuration) {
+                    $interval = $trajet->getDateStart()->diff($trajet->getDateEnd());
+                    $minutes = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
+                    return $minutes <= $maxDuration;
+                });
+            } else {
+                $carSharings = $results;
+            }
 
             if (empty($carSharings)) {
                 $alternative = $repo->getClosestCarSharingAfterDate($from, $to, $dateObj);

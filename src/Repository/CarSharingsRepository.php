@@ -45,26 +45,12 @@ class CarSharingsRepository extends ServiceEntityRepository
             ->setParameter('end', $end);
 
         if (!empty($filters['eco'])) {
-            $qb->andWhere('c.ecoFriendly = true');
+            $qb->andWhere('c.eco_friendly = true');
         }
 
         if (!empty($filters['max_price'])) {
             $qb->andWhere('c.price <= :max_price')
                 ->setParameter('max_price', $filters['max_price']);
-        }
-
-        if (!empty($filters['max_duration'])) {
-            // TIMESTAMPDIFF en MySQL : durée entre deux timestamps en minutes
-            $qb->andWhere("TIMESTAMPDIFF(MINUTE, c.dateStart, c.dateEnd) <= :max_duration")
-                ->setParameter('max_duration', $filters['max_duration']);
-        }
-
-        if (!empty($filters['min_rating'])) {
-            // Joindre les reviews pour calculer la note moyenne
-            $qb->join('u.reviews', 'r')
-                ->groupBy('c.id')
-                ->having('AVG(r.note) >= :min_rating')
-                ->setParameter('min_rating', $filters['min_rating']);
         }
 
         return $qb->getQuery()->getResult();

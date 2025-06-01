@@ -15,6 +15,37 @@ use Symfony\Component\String\UnicodeString;
 
 final class CarSharingController extends AbstractController
 {
+    #[Route('/trajet/{id}/annuler-par-chauffeur', name: 'carsharing_cancel_by_driver')]
+    #[IsGranted('ROLE_USER')]
+    public function cancelAsDriver(
+        CarSharings $carSharing,
+        EntityManagerInterface $em,
+        Security $security
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $security->getUser();
+
+        // Vérifie que l'utilisateur est le conducteur
+        if ($carSharing->getUser() !== $user) {
+            $this->addFlash('danger', 'Vous ne pouvez pas annuler ce trajet.');
+            return $this->redirectToRoute('app_driver_dashboard');
+        }
+
+        // Rembourse chaque participant
+        foreach ($carSharing->getParticipants() as $participant) {
+            $participant->setCredit($participant->getCredit() + $carSharing->getPrice());
+            $participant->removeCarSharingParticipation($carSharing);
+            $em->persist($participant);
+        }
+
+        // Supprime le trajet
+        $em->remove($carSharing);
+        $em->flush();
+
+        $this->addFlash('success', 'Le trajet a été annulé. Tous les participants ont été remboursés.');
+        return $this->redirectToRoute('app_driver_dashboard');
+    }
+
     #[Route('/covoiturage/{id}/annuler', name: 'carsharing_cancel')]
     public function cancelParticipation(
         CarSharings $carSharing,

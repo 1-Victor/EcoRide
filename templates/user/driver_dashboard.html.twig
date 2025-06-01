@@ -3,16 +3,17 @@
 {% block title %}Espace Chauffeur - Mes trajets{% endblock %}
 
 {% block body %}
+{% include 'components/menu.html.twig' %}
 <div class="container mt-5">
-    <h2 class="mb-4">🧑‍✈️ Espace Chauffeur</h2>
+    <h2 class="mb-4">🧑‍✈️ Votre Espace Chauffeur</h2>
 
     <div class="mb-4">
         <a href="{{ path('app_car_sharing_new') }}" class="btn btn-success">
-            ➕ Proposer un nouveau trajet
+            <i class="bi bi-plus-lg p-1"></i> Proposer un nouveau trajet
         </a>
     </div>
 
-    {% if carSharings is not empty %}
+    {% if carSharings|length > 0 %}
         <ul class="list-group">
             {% for trajet in carSharings %}
                 <li class="list-group-item">
@@ -20,10 +21,18 @@
                         <div>
                             🚗 <strong>{{ trajet.startCity }}</strong> → <strong>{{ trajet.endCity }}</strong><br>
                             📅 Départ : {{ trajet.dateStart|date('d/m/Y H:i') }}<br>
-                            💶 Prix : {{ trajet.price }} crédits
+                            💶 Prix : {{ trajet.price }} crédits<br>
+                            🧍‍♂️ Participants : {{ trajet.participants|length }}
                         </div>
                         <div class="text-end">
-                            <a href="{{ path('app_trajet_show', { id: trajet.id }) }}" class="btn btn-outline-primary btn-sm">Voir</a>
+                            <a href="{{ path('app_trajet_show', { id: trajet.id }) }}" class="btn btn-outline-primary btn-sm">
+                                Voir
+                            </a>
+                            <a href="{{ path('carsharing_cancel_by_driver', { id: trajet.id }) }}"
+                                class="btn btn-outline-warning btn-sm"
+                                onclick="return confirm('⚠️ Êtes-vous sûr de vouloir annuler ce trajet ? Les participants seront remboursés.')">
+                                Annuler
+                            </a>
                         </div>
                     </div>
                 </li>

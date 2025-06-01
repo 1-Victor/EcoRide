@@ -82,11 +82,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPreferences::class, orphanRemoval: true)]
     private Collection $userPreferences;
 
-    #[ORM\ManyToMany(targetEntity: CarSharings::class)]
+    #[ORM\ManyToMany(targetEntity: CarSharings::class, inversedBy: 'participants')]
     private Collection $carSharingsParticipated;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: CarSharings::class)]
     private Collection $carSharings;
+
+    #[ORM\OneToMany(mappedBy: 'targetUser', targetEntity: Reviews::class)]
+    private Collection $reviewsReceived;
 
     private ?string $plainPassword = null;
 
@@ -100,6 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userPreferences = new ArrayCollection();
         $this->carSharingsParticipated = new ArrayCollection();
         $this->carSharings = new ArrayCollection();
+        $this->reviewsReceived = new ArrayCollection();
     }
 
     public function setImageFile(?File $imageFile = null): void
@@ -403,22 +407,51 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->carSharingsParticipated;
     }
 
-    public function addCarSharingParticipation(CarSharings $carSharing): static
-    {
-        if (!$this->carSharingsParticipated->contains($carSharing)) {
-            $this->carSharingsParticipated->add($carSharing);
-        }
-        return $this;
-    }
-
     public function getCarSharings(): Collection
     {
         return $this->carSharings;
     }
 
+    public function addCarSharingParticipation(CarSharings $carSharing): static
+    {
+        if (!$this->carSharingsParticipated->contains($carSharing)) {
+            $this->carSharingsParticipated->add($carSharing);
+            $carSharing->getParticipants()->add($this); // synchronisation inverse
+        }
+
+        return $this;
+    }
+
     public function removeCarSharingParticipation(CarSharings $carSharing): static
     {
-        $this->carSharingsParticipated->removeElement($carSharing);
+        if ($this->carSharingsParticipated->removeElement($carSharing)) {
+            $carSharing->getParticipants()->removeElement($this); // synchronisation inverse
+        }
+
         return $this;
+    }
+
+    public function getReviewsReceived(): Collection
+    {
+        return $this->reviewsReceived;
+    }
+
+    public function getAverageRating(): float
+    {
+        if ($this->reviewsReceived->isEmpty()) {
+            return 0;
+        }
+
+        $total = 0;
+        $count = 0;
+
+        foreach ($this->reviewsReceived as $review) {
+            if ($review->isValidated()) {
+                $total += $review->getRating();
+                $count++;
+            }
+        }
+
+        return $count > 0 ? round($total / $count, 1) : 0;
     }
 }

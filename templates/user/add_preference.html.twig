@@ -4,16 +4,87 @@
 
 {% block body %}
 {% include 'components/menu.html.twig' %}
+
 <div class="container py-5">
-    <h2>➕ Ajouter une préférence</h2>
+    <h2 class="mb-4 text-success"><i class="bi bi-sliders2"></i> Ajouter une préférence</h2>
 
-    {{ form_start(form) }}
-        {{ form_row(form.preference) }}
-        {{ form_row(form.value) }}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            {{ form_start(form) }}
 
-        <button class="btn btn-success mt-3">Ajouter</button>
-    {{ form_end(form) }}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label"><i class="bi bi-list-ul"></i> Type de préférence</label>
+                    {{ form_widget(form.preference, { 'attr': {'class': 'form-select'} }) }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><i class="bi bi-pencil"></i> Valeur</label>
+                    {{ form_widget(form.value, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+            </div>
 
-    <a href="{{ path('app_user_dashboard') }}" class="btn btn-outline-secondary mt-4">← Retour</a>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="form-check">
+                        {{ form_widget(form.smokerAllowed, { 'attr': {'class': 'form-check-input'} }) }}
+                        {{ form_label(form.smokerAllowed, null, { 'label_attr': {'class': 'form-check-label'} }) }}
+                        {{ form_errors(form.smokerAllowed) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        {{ form_widget(form.petsAllowed, { 'attr': {'class': 'form-check-input'} }) }}
+                        {{ form_label(form.petsAllowed, null, { 'label_attr': {'class': 'form-check-label'} }) }}
+                        {{ form_errors(form.petsAllowed) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        {{ form_widget(form.airConditioning, { 'attr': {'class': 'form-check-input'} }) }}
+                        {{ form_label(form.airConditioning, null, { 'label_attr': {'class': 'form-check-label'} }) }}
+                        {{ form_errors(form.airConditioning) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ form_label(form.musicPreference) }}
+                    {{ form_widget(form.musicPreference, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.musicPreference) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.talkingPreference) }}
+                    {{ form_widget(form.talkingPreference, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.talkingPreference) }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ form_label(form.latenessTolerance) }}
+                    {{ form_widget(form.latenessTolerance, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.latenessTolerance) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.customPreferences) }}
+                    {{ form_widget(form.customPreferences, { 'attr': {'class': 'form-control', 'style': 'resize: none;'} }) }}
+                    {{ form_errors(form.customPreferences) }}
+                </div>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Ajouter la préférence
+                </button>
+            </div>
+
+            {{ form_end(form, { render_rest: false }) }}
+        </div>
+    </div>
+
+    <a href="{{ path('app_user_dashboard') }}" class="btn btn-outline-secondary mt-4">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
 </div>
 {% endblock %}

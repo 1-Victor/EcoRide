@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\Vehicles;
 use App\Form\VehicleType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,10 +14,23 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Entity\UserPreferences;
 use App\Form\UserPreferencesType;
 use App\Form\UserRolesType;
+use App\Repository\UserPreferencesRepository;
+use App\Repository\VehiclesRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class UserController extends AbstractController
 {
+    #[Route('/utilisateur/{id}', name: 'user_profile')]
+    public function profile(User $user, VehiclesRepository $vehicleRepo, UserPreferencesRepository $prefRepo): Response
+    {
+        return $this->render('user/dashboard.html.twig', [
+            'user' => $user,
+            'vehicles' => $vehicleRepo->findBy(['user' => $user]),
+            'preferences' => $prefRepo->findBy(['user' => $user]),
+            'isPublic' => true
+        ]);
+    }
+
     #[Route('/espace/chauffeur', name: 'app_driver_dashboard')]
     public function driverDashboard(Security $security): Response
     {

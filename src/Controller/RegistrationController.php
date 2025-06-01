@@ -44,7 +44,7 @@ class RegistrationController extends AbstractController
             if (!$defaultRole) {
                 throw new \Exception('Le rôle ROLE_USER est introuvable en base.');
             }
-            $user->setRole($defaultRole);
+            $user->setRoles([$defaultRole->getName()]);
 
             // Persistance
             $entityManager->persist($user);

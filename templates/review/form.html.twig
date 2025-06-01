@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Laisser un avis{% endblock %}
+
+{% block body %}
+{% include 'components/menu.html.twig' %}
+
+<div class="container py-5">
+    <h2 class="mb-4 text-success">
+        <i class="bi bi-chat-dots"></i> Avis sur le trajet du {{ carSharing.dateStart|date('d/m/Y') }}
+    </h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            {{ form_start(form) }}
+
+            <div class="mb-3">
+                <label class="form-label"><i class="bi bi-star-fill text-warning"></i> Note</label>
+                {{ form_widget(form.rating, { 'attr': {'class': 'form-select'} }) }}
+                {{ form_errors(form.rating) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="bi bi-pencil"></i> Commentaire</label>
+                {{ form_widget(form.comment, { 'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Votre retour d’expérience...'} }) }}
+                {{ form_errors(form.comment) }}
+            </div>
+
+            <div class="text-end">
+                <button class="btn btn-success">
+                    <i class="bi bi-send-check-fill"></i> Envoyer l’avis
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <a href="{{ path('app_trajet_show', { id: carSharing.id }) }}" class="btn btn-outline-secondary mt-4">
+        <i class="bi bi-arrow-left"></i> Retour au trajet
+    </a>
+</div>
+{% endblock %}
