@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\CarSharings;
+use App\Entity\CarSharingStates;
 use App\Form\CarSharingType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -177,5 +178,67 @@ final class CarSharingController extends AbstractController
         return $this->render('car_sharing/show.html.twig', [
             'carSharing' => $carSharing,
         ]);
+    }
+
+    #[Route('/trajet/{id}/demarrer', name: 'carsharing_start')]
+    #[IsGranted('ROLE_USER')]
+    public function start(CarSharings $carSharing, EntityManagerInterface $em, Security $security): Response
+    {
+        $user = $security->getUser();
+
+        // Vérifie que l'utilisateur est bien le conducteur
+        if ($user !== $carSharing->getUser()) {
+            $this->addFlash('danger', 'Vous ne pouvez pas démarrer ce trajet.');
+            return $this->redirectToRoute('app_driver_dashboard');
+        }
+
+        // Vérifie que le trajet est bien en attente
+        if ($carSharing->getStatus()->getStatus() !== 'En attente') {
+            $this->addFlash('warning', 'Ce trajet n’est pas en attente.');
+            return $this->redirectToRoute('app_driver_dashboard');
+        }
+
+        // Mise à jour du statut en "En cours"
+        $status = $em->getRepository(CarSharingStates::class)->findOneBy(['status' => 'En cours']);
+        if (!$status) {
+            throw $this->createNotFoundException('Statut "En cours" non trouvé.');
+        }
+
+        $carSharing->setStatus($status);
+        $em->flush();
+
+        $this->addFlash('success', 'Trajet démarré avec succès.');
+        return $this->redirectToRoute('app_driver_dashboard');
+    }
+
+    #[Route('/trajet/{id}/terminer', name: 'carsharing_finish')]
+    #[IsGranted('ROLE_USER')]
+    public function finish(CarSharings $carSharing, EntityManagerInterface $em, Security $security): Response
+    {
+        $user = $security->getUser();
+
+        // Vérifie que l'utilisateur est bien le conducteur
+        if ($user !== $carSharing->getUser()) {
+            $this->addFlash('danger', 'Vous ne pouvez pas terminer ce trajet.');
+            return $this->redirectToRoute('app_driver_dashboard');
+        }
+
+        // Vérifie que le trajet est bien en cours
+        if ($carSharing->getStatus()->getStatus() !== 'En cours') {
+            $this->addFlash('warning', 'Ce trajet n’est pas en cours.');
+            return $this->redirectToRoute('app_driver_dashboard');
+        }
+
+        // Mise à jour du statut en "Terminé"
+        $status = $em->getRepository(CarSharingStates::class)->findOneBy(['status' => 'Terminé']);
+        if (!$status) {
+            throw $this->createNotFoundException('Statut "Terminé" non trouvé.');
+        }
+
+        $carSharing->setStatus($status);
+        $em->flush();
+
+        $this->addFlash('success', 'Trajet terminé. En attente de validation des passagers.');
+        return $this->redirectToRoute('app_driver_dashboard');
     }
 }

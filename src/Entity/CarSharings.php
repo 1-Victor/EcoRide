@@ -312,4 +312,14 @@ class CarSharings
     {
         return $this->participants;
     }
+
+    public function hasReviewFrom(User $user): bool
+    {
+        foreach ($this->reviews as $review) {
+            if ($review->getAuthor() === $user) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

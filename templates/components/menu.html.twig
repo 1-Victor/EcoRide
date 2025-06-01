@@ -26,11 +26,6 @@
                             <i class="bi bi-plus-lg p-1"></i> Proposer
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {% if app.request.get('_route') == 'app_user_roles' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_user_roles') }}">
-                            <i class="bi bi-person-vcard-fill p-1"></i> Roles
-                        </a>
-                    </li>
                     {% if is_granted('ROLE_CHAUFFEUR') %}
                         <li class="nav-item">
                             <a class="nav-link text-white {% if app.request.get('_route') == 'app_driver_dashboard' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_driver_dashboard') }}">
@@ -41,22 +36,6 @@
                     <li class="nav-item">
                         <a class="nav-link text-white {% if app.request.get('_route') == 'app_user_dashboard' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_user_dashboard') }}">
                             <i class="bi bi-person-fill p-1"></i> Profil
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
-                            <i class="bi bi-telephone-fill p-1"></i> Contact
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ path('app_logout') }}">
-                            <i class="bi bi-box-arrow-left p-1"></i> Déconnexion
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link text-white {% if app.request.get('_route') == 'app_login' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_login') }}">
-                            <i class="bi bi-box-arrow-in-left p-1"></i> Connexion
                         </a>
                     </li>
                 {% endif %}

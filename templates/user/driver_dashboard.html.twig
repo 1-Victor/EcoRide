@@ -4,6 +4,7 @@
 
 {% block body %}
 {% include 'components/menu.html.twig' %}
+
 <div class="container mt-5">
     <h2 class="mb-4">🧑‍✈️ Votre Espace Chauffeur</h2>
 
@@ -13,35 +14,78 @@
         </a>
     </div>
 
-    {% if carSharings|length > 0 %}
-        <ul class="list-group">
-            {% for trajet in carSharings %}
-                <li class="list-group-item">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            🚗 <strong>{{ trajet.startCity }}</strong> → <strong>{{ trajet.endCity }}</strong><br>
-                            📅 Départ : {{ trajet.dateStart|date('d/m/Y H:i') }}<br>
-                            💶 Prix : {{ trajet.price }} crédits<br>
-                            🧍‍♂️ Participants : {{ trajet.participants|length }}
-                        </div>
-                        <div class="text-end">
-                            <a href="{{ path('app_trajet_show', { id: trajet.id }) }}" class="btn btn-outline-primary btn-sm">
-                                Voir
-                            </a>
-                            <a href="{{ path('carsharing_cancel_by_driver', { id: trajet.id }) }}"
-                                class="btn btn-outline-warning btn-sm"
-                                onclick="return confirm('⚠️ Êtes-vous sûr de vouloir annuler ce trajet ? Les participants seront remboursés.')">
-                                Annuler
-                            </a>
-                        </div>
+    {# ---------- À VENIR ---------- #}
+    <h3>⏳ Trajets à venir</h3>
+    {% set a_venir = carSharings|filter(t => t.status.status == 'En attente') %}
+    {% if a_venir is empty %}
+        <div class="alert alert-info">Aucun trajet à venir.</div>
+    {% else %}
+        <ul class="list-group mb-4">
+            {% for trajet in a_venir %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        🚗 <strong>{{ trajet.startCity }}</strong> → <strong>{{ trajet.endCity }}</strong><br>
+                        🗓️ {{ trajet.dateStart|date('d/m/Y H:i') }}<br>
+                        💶 {{ trajet.price }} € — 🧑‍🤝‍🧑 {{ trajet.participants|length }} participant(s)
+                    </div>
+                    <div class="text-end">
+                        <a href="{{ path('app_trajet_show', { id: trajet.id }) }}" class="btn btn-outline-primary btn-sm">Voir</a>
+                        <a href="{{ path('carsharing_start', { id: trajet.id }) }}" class="btn btn-success btn-sm ms-2">▶️ Démarrer</a>
+                        <a href="{{ path('carsharing_cancel_by_driver', { id: trajet.id }) }}" class="btn btn-outline-danger btn-sm ms-2" onclick="return confirm('Confirmer l’annulation de ce trajet ?')">❌ Annuler</a>
                     </div>
                 </li>
             {% endfor %}
         </ul>
-    {% else %}
-        <div class="alert alert-info">
-            Vous n'avez pas encore proposé de covoiturage.
-        </div>
     {% endif %}
+
+    {# ---------- EN COURS ---------- #}
+    <h3>🚘 Trajets en cours</h3>
+    {% set en_cours = carSharings|filter(t => t.status.status == 'En cours') %}
+    {% if en_cours is empty %}
+        <div class="alert alert-warning">Aucun trajet en cours.</div>
+    {% else %}
+        <ul class="list-group mb-4">
+            {% for trajet in en_cours %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        🚗 <strong>{{ trajet.startCity }}</strong> → <strong>{{ trajet.endCity }}</strong><br>
+                        🗓️ {{ trajet.dateStart|date('d/m/Y H:i') }}<br>
+                        💶 {{ trajet.price }} € — 🧑‍🤝‍🧑 {{ trajet.participants|length }} participant(s)
+                    </div>
+                    <div class="text-end">
+                        <a href="{{ path('app_trajet_show', { id: trajet.id }) }}" class="btn btn-outline-primary btn-sm">Voir</a>
+                        <a href="{{ path('carsharing_finish', { id: trajet.id }) }}" class="btn btn-secondary btn-sm ms-2">✅ Arrivée</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {# ---------- TERMINÉS ---------- #}
+    <h3>✅ Trajets terminés</h3>
+    {% set termines = carSharings|filter(t => t.status.status == 'Terminé') %}
+    {% if termines is empty %}
+        <div class="alert alert-light">Aucun trajet terminé.</div>
+    {% else %}
+        <ul class="list-group mb-4">
+            {% for trajet in termines %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        🚗 <strong>{{ trajet.startCity }}</strong> → <strong>{{ trajet.endCity }}</strong><br>
+                        🗓️ {{ trajet.dateStart|date('d/m/Y H:i') }}<br>
+                        💶 {{ trajet.price }} € — 🧑‍🤝‍🧑 {{ trajet.participants|length }} participant(s)
+                    </div>
+                    <a href="{{ path('app_trajet_show', { id: trajet.id }) }}" class="btn btn-outline-primary btn-sm">Voir</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+        <div class="text-center mt-3">
+            <a href="{{ path('app_user_dashboard') }}" class="text-decoration-none text-muted">
+                <i class="bi bi-arrow-left-circle"></i> Retour au tableau de bord
+            </a>
+        </div>
+
 </div>
 {% endblock %}
