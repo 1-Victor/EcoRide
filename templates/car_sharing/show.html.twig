@@ -122,6 +122,17 @@
         </div>
     </div>
 
+    {# BOUTON DE CONFIRMATION PASSAGER #}
+    {% if app.user and carSharing.participants.contains(app.user) %}
+        {% set confirmation = carSharing.passengerConfirmations|filter(pc => pc.passenger.id == app.user.id)|first %}
+
+        {% if carSharing.status.status == 'Terminé' and not confirmation %}
+            <a href="{{ path('passenger_confirmation', { id: carSharing.id }) }}" class="btn btn-success mb-3">
+                🚗 Confirmer que tout s'est bien passé
+            </a>
+        {% endif %}
+    {% endif %}
+
     {# AVIS DU TRAJET #}
     <div class="card mb-4">
         <div class="card-body">

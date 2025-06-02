@@ -76,7 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Reviews::class)]
     private Collection $reviews;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vehicles::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vehicles::class, orphanRemoval: true, cascade: ['remove'])]
     private Collection $vehicles;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPreferences::class, orphanRemoval: true)]
@@ -93,6 +93,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private ?string $plainPassword = null;
 
+    /**
+     * @var Collection<int, PassengerConfirmation>
+     */
+    #[ORM\OneToMany(targetEntity: PassengerConfirmation::class, mappedBy: 'passenger')]
+    private Collection $passengerConfirmations;
+
     public function __construct()
     {
         $this->suspensions = new ArrayCollection();
@@ -104,6 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->carSharingsParticipated = new ArrayCollection();
         $this->carSharings = new ArrayCollection();
         $this->reviewsReceived = new ArrayCollection();
+        $this->passengerConfirmations = new ArrayCollection();
     }
 
     public function setImageFile(?File $imageFile = null): void
@@ -453,5 +460,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $count > 0 ? round($total / $count, 1) : 0;
+    }
+
+    /**
+     * @return Collection<int, PassengerConfirmation>
+     */
+    public function getPassengerConfirmations(): Collection
+    {
+        return $this->passengerConfirmations;
+    }
+
+    public function addPassengerConfirmation(PassengerConfirmation $passengerConfirmation): static
+    {
+        if (!$this->passengerConfirmations->contains($passengerConfirmation)) {
+            $this->passengerConfirmations->add($passengerConfirmation);
+            $passengerConfirmation->setPassenger($this);
+        }
+
+        return $this;
+    }
+
+    public function removePassengerConfirmation(PassengerConfirmation $passengerConfirmation): static
+    {
+        if ($this->passengerConfirmations->removeElement($passengerConfirmation)) {
+            // set the owning side to null (unless already changed)
+            if ($passengerConfirmation->getPassenger() === $this) {
+                $passengerConfirmation->setPassenger(null);
+            }
+        }
+
+        return $this;
     }
 }

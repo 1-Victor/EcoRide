@@ -73,11 +73,18 @@ class CarSharings
     #[ORM\ManyToMany(mappedBy: 'carSharingsParticipated', targetEntity: User::class)]
     private Collection $participants;
 
+    /**
+     * @var Collection<int, PassengerConfirmation>
+     */
+    #[ORM\OneToMany(targetEntity: PassengerConfirmation::class, mappedBy: 'carSharing')]
+    private Collection $passengerConfirmations;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->participants = new ArrayCollection();
+        $this->passengerConfirmations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -321,5 +328,50 @@ class CarSharings
             }
         }
         return false;
+    }
+
+    /**
+     * @return Collection<int, PassengerConfirmation>
+     */
+    public function getPassengerConfirmations(): Collection
+    {
+        return $this->passengerConfirmations;
+    }
+
+    public function addPassengerConfirmation(PassengerConfirmation $passengerConfirmation): static
+    {
+        if (!$this->passengerConfirmations->contains($passengerConfirmation)) {
+            $this->passengerConfirmations->add($passengerConfirmation);
+            $passengerConfirmation->setCarSharing($this);
+        }
+
+        return $this;
+    }
+
+    public function removePassengerConfirmation(PassengerConfirmation $passengerConfirmation): static
+    {
+        if ($this->passengerConfirmations->removeElement($passengerConfirmation)) {
+            // set the owning side to null (unless already changed)
+            if ($passengerConfirmation->getCarSharing() === $this) {
+                $passengerConfirmation->setCarSharing(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isFullyConfirmed(): bool
+    {
+        foreach ($this->getParticipants() as $participant) {
+            $confirmed = false;
+            foreach ($this->getPassengerConfirmations() as $confirmation) {
+                if ($confirmation->getPassenger() === $participant && $confirmation->isConfirmed()) {
+                    $confirmed = true;
+                    break;
+                }
+            }
+            if (!$confirmed) return false;
+        }
+        return true;
     }
 }

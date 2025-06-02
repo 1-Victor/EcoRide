@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmation du trajet{% endblock %}
+
+{% block body %}
+{% include 'components/menu.html.twig' %}
+
+<div class="container py-5" style="max-width: 700px;">
+    <h2 class="mb-4"><i class="bi bi-patch-check-fill me-2 text-success"></i> Confirmation du trajet</h2>
+
+    <p>Trajet : <strong>{{ carSharing.startAddress }}</strong> → <strong>{{ carSharing.endAddress }}</strong></p>
+    <p>Date de départ : {{ carSharing.dateStart|date('d/m/Y H:i') }}</p>
+
+    {{ form_start(form) }}
+        <div class="mb-3">
+            <label class="form-label">Avez-vous bien effectué ce trajet ?</label>
+            <div class="form-check">
+                {{ form_widget(form.confirmed.0, {'attr': {'class': 'form-check-input'}}) }}
+                <label class="form-check-label">✅ Oui, tout s’est bien passé</label>
+            </div>
+            <div class="form-check">
+                {{ form_widget(form.confirmed.1, {'attr': {'class': 'form-check-input'}}) }}
+                <label class="form-check-label">❌ Non, j’ai eu un problème</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.comment) }}
+            {{ form_widget(form.comment, {'attr': {'class': 'form-control', 'placeholder': 'Expliquez le souci rencontré...'}}) }}
+            {{ form_errors(form.comment) }}
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">Valider</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
