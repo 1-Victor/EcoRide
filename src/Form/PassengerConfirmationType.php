@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\PassengerConfirmation;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,7 +14,7 @@ class PassengerConfirmationType extends AbstractType
   public function buildForm(FormBuilderInterface $builder, array $options): void
   {
     $builder
-      ->add('confirmed', ChoiceType::class, [
+      ->add('isConfirmed', ChoiceType::class, [
         'label' => 'Avez-vous bien effectué ce trajet ?',
         'choices' => [
           '✅ Oui, tout s’est bien passé' => true,

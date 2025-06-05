@@ -24,6 +24,8 @@
                     <i class="bi bi-gear"></i> Paramètres
                 </button>
 
+                <a class="btn btn-sm" href="{{ path('admin') }}"> <i class="bi bi-shield-lock-fill"></i> Dashboard</a>
+
             {% endif %}
 
             <h4 class="p-3">{{ user.firstname }} {{ user.lastname }}</h4>
@@ -120,11 +122,25 @@
                     <a href="{{ path('app_trajet_show', { id: trajet.id }) }}" class="btn btn-sm btn-outline-primary float-end">Voir</a>
 
                     {% if app.user and app.user.id == user.id %}
-                        {% if trajet.status.status == 'Terminé' and not trajet.hasReviewFrom(app.user) %}
-                            <a href="{{ path('review_add', { id: trajet.id }) }}" class="btn btn-sm btn-success float-end me-2">✍️ Laisser un avis</a>
+                        {% if trajet.status.status == 'Terminé' %}
+                            {# Vérifie si le passager a déjà confirmé #}
+                            {% set hasConfirmed = false %}
+                            {% for confirmation in trajet.passengerConfirmations %}
+                                {% if confirmation.passenger.id == app.user.id %}
+                                    {% set hasConfirmed = true %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if not hasConfirmed %}
+                                <a href="{{ path('passenger_confirmation', { id: trajet.id }) }}" class="btn btn-sm btn-outline-success float-end me-2">✅ Confirmer ce trajet</a>
+                            {% elseif not trajet.hasReviewFrom(app.user) %}
+                                <a href="{{ path('review_add', { id: trajet.id }) }}" class="btn btn-sm btn-success float-end me-2">✍️ Laisser un avis</a>
+                            {% endif %}
                         {% elseif trajet.status.status == 'En attente' %}
                             <a href="{{ path('carsharing_cancel', { id: trajet.id }) }}" class="btn btn-sm btn-outline-danger float-end me-2">❌ Annuler</a>
                         {% endif %}
+                        {% elseif trajet.status.status == 'En attente' %}
+                            <a href="{{ path('carsharing_cancel', { id: trajet.id }) }}" class="btn btn-sm btn-outline-danger float-end me-2">❌ Annuler</a>
                     {% endif %}
                 </li>
             {% endfor %}
@@ -200,6 +216,10 @@
                 </li>
             {% endfor %}
         </ul>
+    {% endfor %}
+
+    {% for review in user.reviews|filter(r => r.validated) %}
+        {   # Afficher l’avis #}
     {% endfor %}
 
     <p class="text-muted mt-4"><em>{% if app.user and app.user.id == user.id %}Voici votre espace personnel.{% else %}Ceci est une version publique du profil utilisateur.{% endif %}</em></p>

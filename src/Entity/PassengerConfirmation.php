@@ -22,11 +22,20 @@ class PassengerConfirmation
     #[ORM\JoinColumn(nullable: false)]
     private ?CarSharings $carSharing = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?bool $confirmed = null;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comment = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $token = null;
+
+    #[ORM\Column]
+    private ?bool $isConfirmed = null;
+
+    #[ORM\Column(length: 20)]
+    private string $status = 'pending'; // pending, validated, rejected
 
     public function getId(): ?int
     {
@@ -41,7 +50,6 @@ class PassengerConfirmation
     public function setPassenger(?User $passenger): static
     {
         $this->passenger = $passenger;
-
         return $this;
     }
 
@@ -53,19 +61,6 @@ class PassengerConfirmation
     public function setCarSharing(?CarSharings $carSharing): static
     {
         $this->carSharing = $carSharing;
-
-        return $this;
-    }
-
-    public function isConfirmed(): ?bool
-    {
-        return $this->confirmed;
-    }
-
-    public function setConfirmed(?bool $confirmed): static
-    {
-        $this->confirmed = $confirmed;
-
         return $this;
     }
 
@@ -77,7 +72,70 @@ class PassengerConfirmation
     public function setComment(?string $comment): static
     {
         $this->comment = $comment;
-
         return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(string $token): static
+    {
+        $this->token = $token;
+        return $this;
+    }
+
+    public function getIsConfirmed(): ?bool
+    {
+        return $this->isConfirmed;
+    }
+
+    public function setIsConfirmed(bool $isConfirmed): static
+    {
+        $this->isConfirmed = $isConfirmed;
+        return $this;
+    }
+
+    public function isConfirmed(): ?bool
+    {
+        return $this->isConfirmed;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    public function isValidated(): bool
+    {
+        return $this->status === 'validated';
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->status === 'rejected';
     }
 }

@@ -15,11 +15,11 @@
         <div class="mb-3">
             <label class="form-label">Avez-vous bien effectué ce trajet ?</label>
             <div class="form-check">
-                {{ form_widget(form.confirmed.0, {'attr': {'class': 'form-check-input'}}) }}
+                {{ form_widget(form.isConfirmed.0, {'attr': {'class': 'form-check-input'}}) }}
                 <label class="form-check-label">✅ Oui, tout s’est bien passé</label>
             </div>
             <div class="form-check">
-                {{ form_widget(form.confirmed.1, {'attr': {'class': 'form-check-input'}}) }}
+                {{ form_widget(form.isConfirmed.1, {'attr': {'class': 'form-check-input'}}) }}
                 <label class="form-check-label">❌ Non, j’ai eu un problème</label>
             </div>
         </div>

@@ -14,6 +14,49 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PassengerConfirmationController extends AbstractController
 {
+  #[Route('/confirmation/{token}', name: 'passenger_confirm_token')]
+  public function confirmByToken(
+    string $token,
+    PassengerConfirmationRepository $repo,
+    EntityManagerInterface $em
+  ): Response {
+    // 🔎 Recherche de la confirmation via le token
+    $confirmation = $repo->findOneBy(['token' => $token]);
+
+    if (!$confirmation) {
+      throw $this->createNotFoundException('Lien de confirmation invalide ou expiré.');
+    }
+
+    // 🔁 Vérifie si déjà confirmé
+    if ($confirmation->isConfirmed()) {
+      $this->addFlash('info', 'Vous avez déjà confirmé ce trajet.');
+      return $this->redirectToRoute('app_home');
+    }
+
+    // ✅ Marque comme confirmé
+    $confirmation->setIsConfirmed(true);
+    $confirmation->setCreatedAt(new \DateTime());
+    $em->persist($confirmation);
+
+    $carSharing = $confirmation->getCarSharing();
+
+    // 🎯 Vérifie si tous les passagers ont confirmé
+    if ($carSharing->isFullyConfirmed()) {
+      $chauffeur = $carSharing->getUser();
+      $gain = $carSharing->getPrice() * count($carSharing->getParticipants());
+      $chauffeur->setCredit($chauffeur->getCredit() + $gain);
+
+      $em->persist($chauffeur);
+      $this->addFlash('success', 'Merci ! Tous les passagers ont confirmé. Le chauffeur a été crédité ✅');
+    } else {
+      $this->addFlash('success', 'Merci pour votre confirmation 🙏');
+    }
+
+    $em->flush();
+
+    return $this->redirectToRoute('app_home');
+  }
+
   #[Route('/covoiturage/{id}/confirmer', name: 'passenger_confirmation')]
   public function confirm(
     CarSharings $carSharing,
@@ -41,6 +84,7 @@ class PassengerConfirmationController extends AbstractController
     $confirmation = new PassengerConfirmation();
     $confirmation->setPassenger($user);
     $confirmation->setCarSharing($carSharing);
+    $confirmation->setToken(bin2hex(random_bytes(32))); // 🔐 Génère un token sécurisé
 
     $form = $this->createForm(PassengerConfirmationType::class, $confirmation);
     $form->handleRequest($request);
@@ -53,6 +97,8 @@ class PassengerConfirmationController extends AbstractController
           'carSharing' => $carSharing,
         ]);
       }
+
+      $confirmation->setCreatedAt(new \DateTime());
 
       $em->persist($confirmation);
       $em->flush();

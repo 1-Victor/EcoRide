@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\CarSharings;
 use App\Entity\CarSharingStates;
+use App\Entity\PassengerConfirmation;
 use App\Form\CarSharingType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -213,23 +214,27 @@ final class CarSharingController extends AbstractController
 
     #[Route('/trajet/{id}/terminer', name: 'carsharing_finish')]
     #[IsGranted('ROLE_USER')]
-    public function finish(CarSharings $carSharing, EntityManagerInterface $em, Security $security): Response
-    {
+    public function finish(
+        CarSharings $carSharing,
+        EntityManagerInterface $em,
+        Security $security,
+        \App\Service\MailerService $mailerService // ✅ Injection du service mailer
+    ): Response {
         $user = $security->getUser();
 
-        // Vérifie que l'utilisateur est bien le conducteur
+        // 🔒 Vérifie que l'utilisateur est bien le conducteur
         if ($user !== $carSharing->getUser()) {
             $this->addFlash('danger', 'Vous ne pouvez pas terminer ce trajet.');
             return $this->redirectToRoute('app_driver_dashboard');
         }
 
-        // Vérifie que le trajet est bien en cours
+        // 🔁 Vérifie que le trajet est bien en cours
         if ($carSharing->getStatus()->getStatus() !== 'En cours') {
             $this->addFlash('warning', 'Ce trajet n’est pas en cours.');
             return $this->redirectToRoute('app_driver_dashboard');
         }
 
-        // Mise à jour du statut en "Terminé"
+        // ✅ Mise à jour du statut en "Terminé"
         $status = $em->getRepository(CarSharingStates::class)->findOneBy(['status' => 'Terminé']);
         if (!$status) {
             throw $this->createNotFoundException('Statut "Terminé" non trouvé.');
@@ -237,6 +242,21 @@ final class CarSharingController extends AbstractController
 
         $carSharing->setStatus($status);
         $em->flush();
+
+        // 📩 Envoi d’un e-mail à chaque passager
+        foreach ($carSharing->getParticipants() as $passenger) {
+            $confirmation = new PassengerConfirmation();
+            $confirmation->setPassenger($passenger);
+            $confirmation->setCarSharing($carSharing);
+            $confirmation->setToken(bin2hex(random_bytes(32))); // 🔐 Token sécurisé
+            $confirmation->setIsConfirmed(false);
+            $confirmation->setCreatedAt(new \DateTime());
+
+            $em->persist($confirmation);
+
+            // 📩 Envoi de l’e-mail avec le lien contenant le token
+            $mailerService->sendTripConfirmation($passenger, $carSharing, $confirmation->getToken());
+        }
 
         $this->addFlash('success', 'Trajet terminé. En attente de validation des passagers.');
         return $this->redirectToRoute('app_driver_dashboard');

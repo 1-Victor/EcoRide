@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Signalements en attente{% endblock %}
+
+{% block body %}
+{% include 'components/menu.html.twig' %}
+
+<div class="container py-5">
+    <h2>📋 Signalements en attente</h2>
+
+    {% if signalements is empty %}
+        <div class="alert alert-info">Aucun signalement en attente.</div>
+    {% else %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Passager</th>
+                    <th>Trajet</th>
+                    <th>Commentaire</th>
+                    <th>Créé le</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in signalements %}
+                    <tr>
+                        <td>{{ s.passenger.username }}</td>
+                        <td>{{ s.carSharing.startCity }} → {{ s.carSharing.endCity }}</td>
+                        <td>{{ s.comment|default('Aucun commentaire') }}</td>
+                        <td>{{ s.createdAt|date('d/m/Y H:i') }}</td>
+                        <td>
+                            <form method="post" action="{{ path('employee_signalement_valider', {id: s.id}) }}" style="display:inline-block;">
+                                <button class="btn btn-sm btn-success" onclick="return confirm('Valider ce signalement ?');">✅ Valider</button>
+                            </form>
+                            <form method="post" action="{{ path('employee_signalement_rejeter', {id: s.id}) }}" style="display:inline-block;">
+                                <button class="btn btn-sm btn-danger" onclick="return confirm('Rejeter ce signalement ?');">❌ Rejeter</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

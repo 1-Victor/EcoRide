@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Confirmation de trajet - EcoRide</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f0f4f8;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: 30px auto;
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+      h2 {
+        color: #2c3e50;
+      }
+      p {
+        line-height: 1.6;
+      }
+      .cta-button {
+        display: inline-block;
+        margin: 20px 0;
+        padding: 12px 24px;
+        background-color: #00b894;
+        color: white !important;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+      .cta-button:hover {
+        background-color: #019d7f;
+      }
+      .footer {
+        font-size: 0.85em;
+        color: #888;
+        margin-top: 30px;
+        text-align: center;
+      }
+      .eco-icon {
+        font-size: 1.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Bonjour {{ user.username }} 👋</h2>
+
+      <p>Le covoiturage <strong>{{ carSharing.startCity }} → {{ carSharing.endCity }}</strong> est maintenant terminé.</p>
+
+      <p>Nous espérons que votre trajet s’est déroulé dans les meilleures conditions.</p>
+
+      <p>Pour nous aider à récompenser votre chauffeur, merci de confirmer que tout s’est bien passé :</p>
+
+      <p>
+        <a href="{{ url('passenger_confirm_token', { token: token }) }}" class="cta-button">
+          ✅ Confirmer le trajet
+        </a>
+      </p>
+
+      <p>
+        Si vous avez rencontré un problème, vous pouvez le signaler depuis votre espace personnel.
+      </p>
+
+      <p>Merci de contribuer à une mobilité plus douce avec <strong>EcoRide</strong> 🌍</p>
+
+      <div class="footer">
+        Cet e-mail est envoyé automatiquement — merci de ne pas y répondre.
+      </div>
+    </div>
+  </body>
+</html>
