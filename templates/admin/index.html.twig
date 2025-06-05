@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block body %}
+{% include 'components/menu_admin.html.twig' %}
+
+    <div class="container">
+        <div class="mb-4">
+            <h2 class="text-center mt-5">Espace d'administration</h2>
+            <p class="text-center text-muted">Gérez les employés, les utilisateurs, les statistiques et les crédits.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm border-primary border-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Gestion des employés</h5>
+                        <p class="card-text">Ajouter un nouvel employé à la plateforme.</p>
+                        <a href="{{ path('admin_create_employee') }}" class="btn btn-primary">Créer un employé</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm border-warning border-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Utilisateurs</h5>
+                        <p class="card-text">Suspendre, réactiver ou consulter les comptes.</p>
+                        <a href="{{ path('admin_users') }}" class="btn btn-warning">Gérer les utilisateurs</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm border-info border-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Statistiques</h5>
+                        <p class="card-text">Voir les graphiques des trajets et crédits.</p>
+                        <a href="{{ path('admin_stats') }}" class="btn btn-info text-white">Voir les graphiques</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm border-success border-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Crédits</h5>
+                        <p class="card-text">Visualiser le gain total de la plateforme.</p>
+                        <a href="{{ path('admin_credits') }}" class="btn btn-success">Total des crédits</a>
+                    </div>
+                </div>
+            </div>
+            <a class="text-center mt-5 text-decoration-none text-dark" href="{{ path('app_user_dashboard') }}">revenir au profile</a>
+        </div>
+
+    </div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Employés{% endblock %}
+
+{% block body %}
+{% include 'components/menu_admin.html.twig' %}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Gestion des Employés</h2>
+
+    <!-- Onglets -->
+    <ul class="nav nav-tabs" id="employeeTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="form-tab" data-bs-toggle="tab" data-bs-target="#form-tab-pane" type="button" role="tab">
+                ➕ Créer un employé
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="roles-tab" data-bs-toggle="tab" data-bs-target="#roles-tab-pane" type="button" role="tab">
+                👥 Gestion des rôles
+            </button>
+        </li>
+    </ul>
+
+    <!-- Contenu des onglets -->
+    <div class="tab-content p-4 border border-top-0 rounded-bottom bg-light">
+        <!-- Onglet Formulaire -->
+        <div class="tab-pane fade show active" id="form-tab-pane" role="tabpanel">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Créer un nouvel employé</h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form_label(form.firstname) }}
+                            {{ form_widget(form.firstname, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.firstname) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.lastname) }}
+                            {{ form_widget(form.lastname, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.lastname) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.username) }}
+                            {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.username) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.email) }}
+                            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.phone) }}
+                            {{ form_widget(form.phone, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.phone) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.plainPassword) }}
+                            {{ form_widget(form.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.plainPassword) }}
+                        </div>
+                    </div>
+                    <div class="text-end mt-4">
+                        <button class="btn btn-primary">{{ form.submit.vars.label }}</button>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Onglet Rôles -->
+        <div class="tab-pane fade" id="roles-tab-pane" role="tabpanel">
+            {% include 'admin/partials/_list_users_roles.html.twig' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

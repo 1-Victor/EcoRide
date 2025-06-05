@@ -30,11 +30,11 @@
                         <td>{{ review.comment }}</td>
                         <td class="text-center">
                             <a href="{{ path('employee_review_validate', { id: review.id }) }}"
-                              class="btn btn-sm btn-success me-2">✅ Valider</a>
+                                class="btn btn-sm btn-success me-2">✅ Valider</a>
 
                             <form action="{{ path('employee_review_delete', { id: review.id }) }}"
-                                  method="post" style="display: inline-block;"
-                                  onsubmit="return confirm('Supprimer cet avis ?');">
+                                    method="post" style="display: inline-block;"
+                                    onsubmit="return confirm('Supprimer cet avis ?');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
                                 <button class="btn btn-sm btn-danger">🗑️ Supprimer</button>
                             </form>

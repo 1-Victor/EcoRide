@@ -1,0 +1,49 @@
+<header class="navbar navbar-expand-lg bg-success sticky-top z-3">
+    <div class="container-fluid">
+        <a class="navbar-brand text-white fw-bold" href="{{ path('app_home') }}">
+            EcoRide
+        </a>
+
+        <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <!-- Liens admin -->
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'admin_dashboard' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('admin_dashboard') }}">
+                            <i class="bi bi-speedometer p-1"></i> Dashboard Admin
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'admin_create_employee' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('admin_create_employee') }}">
+                            <i class="bi bi-person-plus p-1"></i> Nouvel Employé
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'admin_stats' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('admin_stats') }}">
+                            <i class="bi bi-bar-chart-line p-1"></i> Statistiques
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'admin_credits' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('admin_credits') }}">
+                            <i class="bi bi-cash-coin p-1"></i> Crédits
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'admin_users' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('admin_users') }}">
+                            <i class="bi bi-people-fill"></i> Utilisateurs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'admin' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('admin') }}">
+                            <i class="bi bi-pencil-square"></i> Les reviews
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</header>

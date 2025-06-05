@@ -72,4 +72,35 @@ class CarSharingsRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function countCarSharingsByDay(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select("SUBSTRING(c.dateStart, 1, 10) AS jour, COUNT(c.id) AS nb")
+            ->groupBy('jour')
+            ->orderBy('jour', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getTotalCarSharingsCount(): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countCancelledCarSharingsByDay(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select("SUBSTRING(c.updated_at, 1, 10) AS jour, COUNT(c.id) AS nb")
+            ->join('c.status', 's')
+            ->where('s.status = :cancelled')
+            ->setParameter('cancelled', 'Annulé')
+            ->groupBy('jour')
+            ->orderBy('jour', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

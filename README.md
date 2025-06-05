@@ -140,22 +140,7 @@ php bin/phpunit
 
 ---
 
-## 👤 Auteurs
+## 👤 Auteur
 
-- **Développement principal** : Mathis (poste local)
+- **Développement principal** : Victor (poste local)
 - **Hébergement & GitHub** : Victor ([github.com/1-Victor](https://github.com/1-Victor))
-
----
-
-## 📜 Licence
-
-Ce projet est open-source, sous licence **MIT**.
-
----
-
-## 📌 À venir
-
-- ✅ Version mobile améliorée
-- ✅ Système de notifications
-- ✅ Export PDF des trajets
-- ✅ API REST

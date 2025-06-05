@@ -12,13 +12,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
+#[AdminDashboard(routePath: '/employee/reviews', routeName: 'admin')]
 #[IsGranted('ROLE_ADMIN')]
 class DashboardController extends AbstractDashboardController
 {
     public function index(): Response
     {
-        // Redirige automatiquement vers le CRUD des avis
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
         $url = $adminUrlGenerator
             ->setController(ReviewsCrudController::class)

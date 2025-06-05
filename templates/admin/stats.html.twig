@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques | EcoRide{% endblock %}
+
+{% block body %}
+{% include 'components/menu_admin.html.twig' %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <h1 class="display-6 fw-bold">📊 Statistiques de la plateforme</h1>
+        <p class="text-muted fs-5">Analyse quotidienne des trajets publiés et des crédits gagnés.</p>
+    </div>
+
+    <div class="row justify-content-center g-4">
+        <!-- Carte Nombre de trajets -->
+        <div class="col-lg-10">
+            <div class="card border-0 shadow rounded-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-bar-chart-fill fs-3 text-primary me-2"></i>
+                        <h4 class="mb-0">Nombre de trajets par jour</h4>
+                    </div>
+                    <canvas id="trajetsChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte Crédits -->
+        <div class="col-lg-10">
+            <div class="card border-0 shadow rounded-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-currency-exchange fs-3 text-success me-2"></i>
+                        <h4 class="mb-0">Crédits gagnés par jour</h4>
+                    </div>
+                    <canvas id="creditsChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Icons (pour les icônes modernes) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = {{ labels|raw }};
+    const nbTrajets = {{ nbTrajets|raw }};
+    const nbCredits = {{ nbCredits|raw }};
+
+    // Trajets Chart
+    new Chart(document.getElementById('trajetsChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Trajets',
+                data: nbTrajets,
+                backgroundColor: 'rgba(0, 123, 255, 0.6)',
+                borderColor: 'rgba(0, 123, 255, 1)',
+                borderWidth: 1,
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: true }
+            },
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+
+    // Crédits Chart
+    new Chart(document.getElementById('creditsChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Crédits',
+                data: nbCredits,
+                backgroundColor: 'rgba(25, 135, 84, 0.2)',
+                borderColor: 'rgba(25, 135, 84, 1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: 'rgba(25, 135, 84, 1)',
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: true }
+            },
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+{% endblock %}

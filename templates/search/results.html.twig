@@ -3,93 +3,95 @@
 {% block title %}Résultats de recherche{% endblock %}
 
 {% block body %}
-{% include 'components/menu.html.twig' %}
+    {% include 'components/menu.html.twig' %}
 
-<div class="container py-5">
-    <h2 class="mb-4 text-success">
-        <i class="bi bi-search"></i> Résultats pour le trajet {{ from }} → {{ to }} le {{ date|date('d/m/Y') }}
-    </h2>
-
-    {% if eco or max_price or max_duration or min_rating %}
-        <div class="alert alert-info">
-            <h5 class="mb-2"><i class="bi bi-funnel-fill"></i> Filtres actifs :</h5>
-            <ul class="mb-0">
-                {% if eco %}
-                    <li>🌿 Voyages écologiques uniquement</li>
-                {% endif %}
-                {% if max_price %}
-                    <li>💰 Prix maximum : <strong>{{ max_price }} €</strong></li>
-                {% endif %}
-                {% if max_duration %}
-                    <li>⏱ Durée maximale : <strong>{{ max_duration }} minutes</strong></li>
-                {% endif %}
-                {% if min_rating %}
-                    <li>⭐ Note minimale du conducteur : <strong>{{ min_rating }}/5</strong></li>
-                {% endif %}
-            </ul>
-        </div>
-    {% endif %}
-
-    {% if carSharings is not defined or carSharings is empty %}
-        <div class="alert alert-warning">
-            <i class="bi bi-exclamation-circle"></i> Aucun covoiturage trouvé pour les critères spécifiés.
+    <div class="container py-5">
+        <div class="mb-4 p-4 bg-white rounded shadow-sm">
+            <h2 class="text-success">
+                <i class="bi bi-search"></i> Résultats pour le trajet {{ from }} → {{ to }} le {{ date|date('d/m/Y') }}
+            </h2>
         </div>
 
-        {% if alternative %}
-            <div class="alert alert-secondary">
-                <strong>Prochain trajet suggéré :</strong><br>
-                📅 <strong>{{ alternative.dateStart|date('d/m/Y H:i') }}</strong><br>
-                <a href="{{ path('app_trajet_show', { id: alternative.id }) }}" class="btn btn-outline-success btn-sm mt-2">
-                    Voir ce trajet
-                </a>
+        {% if eco or max_price or max_duration or min_rating %}
+            <div class="alert alert-info shadow-sm rounded-3">
+                <h5 class="mb-2"><i class="bi bi-funnel-fill"></i> Filtres actifs :</h5>
+                <ul class="mb-0">
+                    {% if eco %}
+                        <li>🌿 Voyages écologiques uniquement</li>
+                    {% endif %}
+                    {% if max_price %}
+                        <li>💰 Prix maximum : <strong>{{ max_price }} €</strong></li>
+                    {% endif %}
+                    {% if max_duration %}
+                        <li>⏱ Durée maximale : <strong>{{ max_duration }} minutes</strong></li>
+                    {% endif %}
+                    {% if min_rating %}
+                        <li>⭐ Note minimale du conducteur : <strong>{{ min_rating }}/5</strong></li>
+                    {% endif %}
+                </ul>
             </div>
         {% endif %}
-    {% else %}
-        <div class="row">
-            {% for item in carSharings %}
-                {% set duration = item.dateStart.diff(item.dateEnd) %}
-                {% set duration_minutes = (duration.days * 1440) + (duration.h * 60) + duration.i %}
-                {% set notes = item.user.reviewsReceived|map(r => r.rating)|filter(n => n is not null) %}
-                {% set avg = notes|length > 0 ? (notes|reduce((carry, n) => carry + n) / notes|length)|number_format(1) : 'Aucune note' %}
 
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                {% if item.user.imageName %}
-                                    <img src="{{ asset('uploads/users/image_profile/' ~ item.user.imageName) }}"
-                                        class="rounded-circle me-3"
-                                        style="width: 50px; height: 50px; object-fit: cover;"
-                                        alt="Photo de {{ item.user.username }}">
-                                {% endif %}
-                                <div>
-                                    <strong>{{ item.user.username }}</strong><br>
-                                    <small>⭐ {{ avg }}/5</small>
+        {% if carSharings is not defined or carSharings is empty %}
+            <div class="alert alert-warning shadow-sm rounded-3">
+                <i class="bi bi-exclamation-circle"></i> Aucun covoiturage trouvé pour les critères spécifiés.
+            </div>
+
+            {% if alternative %}
+                <div class="alert alert-secondary rounded-3 shadow-sm">
+                    <strong>Prochain trajet suggéré :</strong><br>
+                    📅 <strong>{{ alternative.dateStart|date('d/m/Y H:i') }}</strong><br>
+                    <a href="{{ path('app_trajet_show', { id: alternative.id }) }}" class="btn btn-outline-success btn-sm mt-2">
+                        Voir ce trajet
+                    </a>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="row gy-4">
+                {% for item in carSharings %}
+                    {% set duration = item.dateStart.diff(item.dateEnd) %}
+                    {% set duration_minutes = (duration.days * 1440) + (duration.h * 60) + duration.i %}
+                    {% set notes = item.user.reviewsReceived|map(r => r.rating)|filter(n => n is not null) %}
+                    {% set avg = notes|length > 0 ? (notes|reduce((carry, n) => carry + n) / notes|length)|number_format(1) : 'Aucune note' %}
+
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow rounded-4 border-0">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    {% if item.user.imageName %}
+                                        <img src="{{ asset('uploads/users/image_profile/' ~ item.user.imageName) }}"
+                                            class="rounded-circle me-3 border"
+                                            style="width: 55px; height: 55px; object-fit: cover;"
+                                            alt="Photo de {{ item.user.username }}">
+                                    {% endif %}
+                                    <div>
+                                        <strong>{{ item.user.username }}</strong><br>
+                                        <small class="text-muted">⭐ {{ avg }}/5</small>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <ul class="list-unstyled small">
-                                <li>📍 <strong>Départ :</strong> {{ item.dateStart|date('d/m/Y H:i') }}</li>
-                                <li>🏁 <strong>Arrivée :</strong> {{ item.dateEnd|date('d/m/Y H:i') }}</li>
-                                <li>🕓 <strong>Durée :</strong> {{ duration_minutes }} min</li>
-                                <li>💰 <strong>Prix :</strong> {{ item.price }} €</li>
-                                <li>👥 <strong>Places dispo :</strong> {{ item.availablePlaces }}/{{ item.totalPlaces }}</li>
-                                <li>
-                                    🌱 <strong>Écologique :</strong>
-                                    {{ item.ecoFriendly ? 'Oui ✅' : 'Non ❌' }}
-                                </li>
-                            </ul>
+                                <ul class="list-unstyled small mb-3">
+                                    <li>📍 <strong>Départ :</strong> {{ item.dateStart|date('d/m/Y H:i') }}</li>
+                                    <li>🏁 <strong>Arrivée :</strong> {{ item.dateEnd|date('d/m/Y H:i') }}</li>
+                                    <li>🕓 <strong>Durée :</strong> {{ duration_minutes }} min</li>
+                                    <li>💰 <strong>Prix :</strong> {{ item.price }} €</li>
+                                    <li>👥 <strong>Places dispo :</strong> {{ item.availablePlaces }}/{{ item.totalPlaces }}</li>
+                                    <li>
+                                        🌱 <strong>Écologique :</strong>
+                                        {{ item.ecoFriendly ? 'Oui ✅' : 'Non ❌' }}
+                                    </li>
+                                </ul>
 
-                            <div class="text-end">
-                                <a href="{{ path('app_trajet_show', { id: item.id }) }}" class="btn btn-success btn-sm">
-                                    Voir le détail
-                                </a>
+                                <div class="text-end">
+                                    <a href="{{ path('app_trajet_show', { id: item.id }) }}" class="btn btn-success btn-sm">
+                                        Voir le détail
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

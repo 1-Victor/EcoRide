@@ -1,0 +1,30 @@
+<table class="table table-bordered table-striped mt-4">
+    <thead class="table-dark">
+        <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Rôles</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+        <tr>
+            <td>{{ user.firstname }} {{ user.lastname }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.roles|join(', ') }}</td>
+            <td>
+                {% if 'ROLE_EMPLOYE' in user.roles %}
+                    <a href="{{ path('admin_remove_employe', {'id': user.id}) }}" class="btn btn-sm btn-outline-danger">
+                        Retirer rôle EMPLOYE
+                    </a>
+                {% else %}
+                  <a href="{{ path('admin_add_employe', {'id': user.id}) }}" class="btn btn-sm btn-outline-success">
+                      Ajouter rôle EMPLOYE
+                  </a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

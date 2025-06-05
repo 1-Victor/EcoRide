@@ -5,51 +5,58 @@
 {% block body %}
 {% include 'components/menu.html.twig' %}
 
-<div class="container py-5">
+<div class="container">
 
     {# ---------- INFOS UTILISATEUR ---------- #}
-    <div class="row mb-4">
-        <div class="col-md-2">
-            {% if user.imageName %}
-                <img src="{{ asset('uploads/users/image_profile/' ~ user.imageName) }}" alt="Photo de {{ user.username }}" class="img-thumbnail rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
-            {% else %}
-                <img src="{{ asset('images/image_default.jpg') }}" alt="Photo de base" class="img-thumbnail rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
-            {% endif %}
-        </div>
+    <div class="p-4 mb-5">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                {% if user.imageName %}
+                    <img src="{{ asset('uploads/users/image_profile/' ~ user.imageName) }}" alt="Photo de {{ user.username }}" class="img-thumbnail rounded-circle border-success border-2" style="width: 100px; height: 100px; object-fit: cover;">
+                {% else %}
+                    <img src="{{ asset('images/image_default.jpg') }}" alt="Photo de base" class="img-thumbnail rounded-circle border-success border-2" style="width: 100px; height: 100px; object-fit: cover;">
+                {% endif %}
+            </div>
+            <div class="col-md-10">
+                {% if app.user and app.user.id == user.id %}
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <button class="btn btn-outline-dark btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                            <i class="bi bi-gear me-1"></i> Paramètres
+                        </button>
 
-        <div class="col-md-10">
-
-            {% if app.user and app.user.id == user.id %}
-                <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#settingsModal">
-                    <i class="bi bi-gear"></i> Paramètres
-                </button>
-
-                <a class="btn btn-sm" href="{{ path('admin') }}"> <i class="bi bi-shield-lock-fill"></i> Dashboard</a>
-
-            {% endif %}
-
-            <h4 class="p-3">{{ user.firstname }} {{ user.lastname }}</h4>
-            <p>🆔 Pseudo : {{ user.username }}</p>
-            <p>📞 Téléphone : {{ user.phone }}</p>
-            <p>⭐ Note moyenne : {{ user.getAverageRating() }}/5</p>
-            {% if app.user and app.user.id == user.id %}
-                <p>💰 Crédits : {{ user.getCredit() }}</p>
-            {% endif %}
-
-            <h5>Rôles :</h5>
-            <ul>
-                {% for role in user.roles %}
-                    <li>
-                        {% if role == 'ROLE_USER' %}👤 Utilisateur
-                        {% elseif role == 'ROLE_CHAUFFEUR' %}🚗 Chauffeur
-                        {% elseif role == 'ROLE_PASSAGER' %}🧍‍♂️ Passager
-                        {% elseif role == 'ROLE_ADMIN' %}🛡️ Admin
-                        {% elseif role == 'ROLE_EMPLOYEE' %}🏢 Employé
-                        {% else %}{{ role }}
+                        {% if 'ROLE_ADMIN' in app.user.roles or 'ROLE_EMPLOYEE' in app.user.roles %}
+                            <a class="btn btn-outline-success btn-sm rounded-pill" href="{{ path('admin_dashboard') }}">
+                                <i class="bi bi-shield-lock-fill me-1"></i> Dashboard administration
+                            </a>
+                            <a class="btn btn-outline-primary btn-sm rounded-pill" href="{{ path('admin') }}">
+                                <i class="bi bi-speedometer me-1"></i> Dashboard des reviews
+                            </a>
                         {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+                    </div>
+                {% endif %}
+
+                <h4 class="mb-1">{{ user.firstname }} {{ user.lastname }}</h4>
+                <p class="mb-1">@{{ user.username }}</p>
+                <p class="mb-1">📞 {{ user.phone }}</p>
+                <p class="mb-1">⭐ Note moyenne : {{ user.getAverageRating() }}/5</p>
+                {% if app.user and app.user.id == user.id %}
+                    <p class="mb-2">💰 Crédits : {{ user.getCredit() }}</p>
+                {% endif %}
+
+                <div class="d-flex flex-wrap gap-2">
+                    {% for role in user.roles %}
+                        <span class="badge border border-success bg-success-subtle text-dark rounded-pill px-3 py-1">
+                            {% if role == 'ROLE_USER' %}👤 Utilisateur
+                            {% elseif role == 'ROLE_CHAUFFEUR' %}🚗 Chauffeur
+                            {% elseif role == 'ROLE_PASSAGER' %}🧍‍♂️ Passager
+                            {% elseif role == 'ROLE_ADMIN' %}🛡️ Admin
+                            {% elseif role == 'ROLE_EMPLOYEE' %}🏢 Employé
+                            {% else %}{{ role }}
+                            {% endif %}
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 
@@ -115,7 +122,7 @@
         <div class="alert alert-info">Aucun covoiturage réservé.</div>
     {% else %}
         <ul class="list-group mb-4">
-            {% for trajet in user.carSharingsParticipated %}
+            {% for trajet in user.carSharingsParticipated|reverse %}
                 <li class="list-group-item">
                     {{ trajet.startAddress }} → {{ trajet.endAddress }}<br>
                     📅 {{ trajet.dateStart|date('d/m/Y H:i') }} – 💶 {{ trajet.price }} €
@@ -200,26 +207,48 @@
         </ul>
     {% endif %}
 
+    <h5 class="mt-4 mb-3">🚘 Trajets proposés</h5>
+
     {% for carSharing in user.carSharings %}
-        <h6>🚗 Trajet : {{ carSharing.startAddress }} → {{ carSharing.endAddress }}</h6>
-        <ul>
-            {% for participant in carSharing.participants %}
-                <li>
-                    {{ participant.username }}
-                    {% set confirmed = false %}
-                    {% for confirmation in carSharing.passengerConfirmations %}
-                        {% if confirmation.passenger.id == participant.id and confirmation.confirmed %}
-                            {% set confirmed = true %}
-                        {% endif %}
+        <div class="card mb-3 border-success">
+            <div class="card-header bg-success text-white">
+                <strong>🚗 {{ carSharing.startAddress }} → {{ carSharing.endAddress }}</strong>
+            </div>
+            <div class="card-body bg-light">
+                <h6 class="mb-2">👥 Passagers :</h6>
+                <ul class="list-group list-group-flush">
+                    {% for participant in carSharing.participants %}
+                        {% set confirmed = false %}
+                        {% for confirmation in carSharing.passengerConfirmations %}
+                            {% if confirmation.passenger.id == participant.id and confirmation.confirmed %}
+                                {% set confirmed = true %}
+                            {% endif %}
+                        {% endfor %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ participant.username }}
+                            {% if confirmed %}
+                                <span class="badge bg-success">✅ Confirmé</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">❌ En attente</span>
+                            {% endif %}
+                        </li>
                     {% endfor %}
-                    : {{ confirmed ? "✅ confirmé" : "❌ en attente" }}
-                </li>
-            {% endfor %}
-        </ul>
+                </ul>
+            </div>
+        </div>
+    {% else %}
+        <p class="text-muted">Aucun trajet proposé.</p>
     {% endfor %}
 
+    <h5 class="mt-4 mb-3">📝 Avis reçus</h5>
+
     {% for review in user.reviews|filter(r => r.validated) %}
-        {   # Afficher l’avis #}
+        <div class="alert alert-info mb-2">
+            <strong>Note :</strong> {{ review.rating }}/5<br>
+            <strong>Commentaire :</strong> {{ review.comment }}
+        </div>
+    {% else %}
+        <p class="text-muted">Aucun avis validé pour cet utilisateur.</p>
     {% endfor %}
 
     <p class="text-muted mt-4"><em>{% if app.user and app.user.id == user.id %}Voici votre espace personnel.{% else %}Ceci est une version publique du profil utilisateur.{% endif %}</em></p>
@@ -241,9 +270,9 @@
                 <div class="row">
                     <div class="col-md-4 text-center">
                         {% if app.user.imageName %}
-                            <img src="{{ asset('uploads/users/image_profile/' ~ app.user.imageName) }}" alt="Photo de {{ app.user.username }}" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                            <img src="{{ asset('uploads/users/image_profile/' ~ app.user.imageName) }}" alt="Photo de {{ app.user.username }}" class="rounded-circle mb-3 border-success border-2" style="width: 120px; height: 120px; object-fit: cover;">
                         {% else %}
-                            <img src="{{ asset('images/image_default.jpg') }}" alt="Photo par défaut" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                            <img src="{{ asset('images/image_default.jpg') }}" alt="Photo par défaut" class="rounded-circle mb-3 border-success border-2" style="width: 120px; height: 120px; object-fit: cover;">
                         {% endif %}
                             <p><strong>{{ app.user.firstname }} {{ app.user.lastname }}</strong></p>
                             <p>Pseudo : {{ app.user.username }}</p>

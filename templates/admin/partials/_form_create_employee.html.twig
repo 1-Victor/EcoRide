@@ -1,0 +1,47 @@
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+        <h4 class="mb-0">Créer un nouvel employé</h4>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-4">Ce compte aura automatiquement le rôle <strong>EMPLOYE</strong>.</p>
+
+        {{ form_start(form) }}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    {{ form_label(form.firstname) }}
+                    {{ form_widget(form.firstname, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.firstname) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.lastname) }}
+                    {{ form_widget(form.lastname, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.lastname) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.username) }}
+                    {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.username) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.email) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.email) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.phone) }}
+                    {{ form_widget(form.phone, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.phone) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_label(form.plainPassword) }}
+                    {{ form_widget(form.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.plainPassword) }}
+                </div>
+            </div>
+
+            <div class="text-end mt-4">
+                <button class="btn btn-primary">{{ form.submit.vars.label }}</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>

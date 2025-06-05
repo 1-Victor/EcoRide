@@ -23,13 +23,14 @@
                 {# Si utilisateur connecté et ROLE_EMPLOYEE #}
                 {% if is_granted('ROLE_EMPLOYEE') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('employee_signalements') }}">Signalements en attente</a>
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'employee_signalements' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('employee_signalements') }}">
+                            <i class="bi bi-hourglass-split"></i> Signalements en attente
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('employee_signalements_valides') }}">Signalements validés</a>
-                    </li>
-                    <li class="nav-item">
-                        {# <a class="nav-link" href="{{ path('employee_reviews_dashboard') }}">Modération des avis</a> #}
+                        <a class="nav-link text-white {% if app.request.get('_route') == 'employee_signalements_valides' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('employee_signalements_valides') }}">
+                            <i class="bi bi-check-circle"></i> Signalements validés
+                        </a>
                     </li>
                 {% endif %}
                 {% if app.user %}

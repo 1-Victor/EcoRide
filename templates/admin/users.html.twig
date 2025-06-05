@@ -1,0 +1,55 @@
+{# templates/admin/users.html.twig #}
+{% extends 'base.html.twig' %}
+{% block title %}Gestion des utilisateurs{% endblock %}
+
+{% block body %}
+{% include 'components/menu_admin.html.twig' %}
+
+<div class="container mt-5">
+    <h2>Utilisateurs</h2>
+    <table class="table table-hover mt-3">
+        <thead class="table-success">
+            <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Rôles</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.firstname }} {{ user.lastname }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% for role in user.roles %}
+                        <span class="badge bg-dark">{{ role }}</span>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% if user.suspensions|length > 0 %}
+                        <span class="badge bg-danger">Suspendu</span>
+                    {% else %}
+                        <span class="badge bg-success">Actif</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if 'ROLE_EMPLOYE' in user.roles %}
+                        <a href="{{ path('admin_remove_employe', {id: user.id}) }}" class="btn btn-outline-warning btn-sm">Retirer EMPLOYE</a>
+                    {% else %}
+                        <a href="{{ path('admin_add_employe', {id: user.id}) }}" class="btn btn-outline-success btn-sm">Ajouter EMPLOYE</a>
+                    {% endif %}
+
+                    {% if user.suspensions|length > 0 %}
+                        <a href="{{ path('admin_unsuspend_user', {id: user.id}) }}" class="btn btn-outline-primary btn-sm">Réactiver</a>
+                    {% else %}
+                        <a href="{{ path('admin_suspend_user', {id: user.id}) }}" class="btn btn-outline-danger btn-sm">Suspendre</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
