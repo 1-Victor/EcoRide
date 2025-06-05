@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Signalements Validés{% endblock %}
+
+{% block body %}
+{% include 'components/menu.html.twig' %}
+
+<div class="container py-5">
+    <h2 class="mb-4">📋 Signalements Validés (Trajets mal passés)</h2>
+
+    {% if signalements is empty %}
+        <div class="alert alert-info">Aucun signalement validé.</div>
+    {% else %}
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th># Trajet</th>
+                    <th>Chauffeur</th>
+                    <th>Passager</th>
+                    <th>Dates / Lieux</th>
+                    <th>Commentaire du passager</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in signalements %}
+                    <tr>
+                        <td>{{ s.carSharing.id }}</td>
+                        <td>
+                            {{ s.carSharing.user.username }}<br>
+                            <a href="mailto:{{ s.carSharing.user.email }}">{{ s.carSharing.user.email }}</a>
+                        </td>
+                        <td>
+                            {{ s.passenger.username }}<br>
+                            <a href="mailto:{{ s.passenger.email }}">{{ s.passenger.email }}</a>
+                        </td>
+                        <td>
+                            Départ : {{ s.carSharing.dateStart|date('d/m/Y H:i') }}<br>
+                            Arrivée : {{ s.carSharing.dateEnd ? s.carSharing.dateEnd|date('d/m/Y H:i') : 'Non renseignée' }}<br>
+                            {{ s.carSharing.startAddress }} → {{ s.carSharing.endAddress }}
+                        </td>
+                        <td>{{ s.comment|default('Aucun commentaire') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

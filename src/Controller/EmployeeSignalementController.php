@@ -76,4 +76,16 @@ class EmployeeSignalementController extends AbstractController
 
     return $this->redirectToRoute('employee_signalements');
   }
+
+  // src/Controller/EmployeeSignalementController.php
+
+  #[Route('/signalements/valides', name: 'employee_signalements_valides')]
+  public function valides(PassengerConfirmationRepository $repo): Response
+  {
+    $signalements = $repo->findValidatedSignalements();
+
+    return $this->render('employee/signalements_valides.html.twig', [
+      'signalements' => $signalements,
+    ]);
+  }
 }

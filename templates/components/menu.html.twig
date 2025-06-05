@@ -20,6 +20,18 @@
                         <i class="bi bi-map p-1"></i> Covoiturages
                     </a>
                 </li>
+                {# Si utilisateur connecté et ROLE_EMPLOYEE #}
+                {% if is_granted('ROLE_EMPLOYEE') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('employee_signalements') }}">Signalements en attente</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('employee_signalements_valides') }}">Signalements validés</a>
+                    </li>
+                    <li class="nav-item">
+                        {# <a class="nav-link" href="{{ path('employee_reviews_dashboard') }}">Modération des avis</a> #}
+                    </li>
+                {% endif %}
                 {% if app.user %}
                     <li class="nav-item">
                         <a class="nav-link text-white {% if app.request.get('_route') == 'app_car_sharing_new' %}active fw-bold text-success-emphasis{% endif %}" href="{{ path('app_car_sharing_new') }}">

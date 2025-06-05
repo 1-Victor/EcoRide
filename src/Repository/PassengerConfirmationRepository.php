@@ -16,28 +16,44 @@ class PassengerConfirmationRepository extends ServiceEntityRepository
         parent::__construct($registry, PassengerConfirmation::class);
     }
 
-//    /**
-//     * @return PassengerConfirmation[] Returns an array of PassengerConfirmation objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    // src/Repository/PassengerConfirmationRepository.php
 
-//    public function findOneBySomeField($value): ?PassengerConfirmation
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findValidatedSignalements(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.carSharing', 'c')
+            ->join('c.user', 'chauffeur')
+            ->join('p.passenger', 'passager')
+            ->addSelect('c', 'chauffeur', 'passager')
+            ->where('p.status = :status')
+            ->setParameter('status', 'validated')
+            ->orderBy('p.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    //    /**
+    //     * @return PassengerConfirmation[] Returns an array of PassengerConfirmation objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('p.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?PassengerConfirmation
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }
